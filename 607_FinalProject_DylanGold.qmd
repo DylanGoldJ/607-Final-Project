@@ -5,23 +5,223 @@ format: html
 editor: visual
 ---
 
-## Quarto
+# Approach
+For this project I will be collecting data on video game sales as well as video game reviews and seeing how factors like review score and genre affect videogame sales.
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+# Collecting data
+To start this project we need to first collect the data. \
+I have chosen two data sources one is a csv from https://www.kaggle.com/datasets/volodymyrpivoshenko/video-game-sales-dataset \
+The other is using an api of a gaming review website rawg.io. This is a link to their api documentation https://api.rawg.io/docs/#tag/developers \
 
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
-```{r}
-1 + 1
+First I will collect the data from the csv. This will serve as our base data that we will use to query the api.
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(httr)
+library(jsonlite)
 ```
 
-You can add options to executable code like this
 
+```{r, message=FALSE, warning=FALSE}
+url <- "https://raw.githubusercontent.com/DylanGoldJ/607-Final-Project/refs/heads/main/video_games_sales.csv"
+
+df <- read_csv(
+  file = url,
+  col_names = TRUE
+)
+
+
+head(df, 5)
+```
+Now I also need to collect data from the api. \
+I will start with a simple example. \
+First I will load in my key
 ```{r}
-#| echo: false
-2 * 2
+api_key <- Sys.getenv("RAWGIO_API_KEY") # Load api key from envrionment.
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+Because the api has way more total games than our data set we will query the data set for each game individually.\
+First I will try to get Wii Sports game info from the api. \
+
+```{r}
+api_url <- "https://api.rawg.io/api/games"
+
+response <- GET(
+  api_url,
+  query = list(
+    key = api_key, # Api key
+    search = "Wii Sports" # Wii sports as our testing value.
+  )
+)
+
+status_code(response)
+```
+We got a sucessful response. Now I will extract the data from the response
+```{r}
+data <- fromJSON(content(response, "text", encoding = "UTF-8"))
+game_review <- data$results
+head(game_review)
+```
+
+We can see that we were given a list of games that match the search query. The top match Wii Sports is exactly what we searched for. \
+We can also see that the second game from this search is also the 4th ranked game on our games sold data frame. \
+There will be times when we get multiple games from a search query that are in our games sold data frame. \
+To minimize the number of requests (I have only 20,000 this month) I will try to fill in this data as well from each search. \
+
+This was a challenge I had, making sure to not waste my limited requests. Initially my plan was to search each game one at a time. While I may have had enough requests to do this it would be a lot slower as well as waste requests that I may need for the future. \
+Because the search was not an exact match, we can get values that we did not search directly which helps maintain our query limit.
+
+First I will make a function that takes the values from the request for the game and binds them to the original data frame with a left join.
+```{r}
+game_data <- df # Copy of df to work on
+
+# Make new columns in game_data
+
+# This function will take the sold df and the reviews df and fill in columns for the game_data df based on the df_reviews.
+combine_data <- function(df, df_reviews){
+  # Select columns from reviews that we want to add.
+  head(df_reviews)
+  df_reviews <- df_reviews %>% select( # Select different rating to use, `rating` seems to be the main one.
+    Name = name,
+    rating, 
+    rating_top,
+    metacritic,
+    score,
+    ratings_count
+  )
+  
+  combined <- left_join(df, df_reviews, by = "Name")
+  return(combined)
+}
+combined_wii <- combine_data(game_data, game_review)
+head(combined_wii)
+
+```
+We can see that there are several columns that got filled in below is some of the values
+```{r}
+head(combined_wii %>% filter(!is.na(rating))) # Check rows with a rating
+```
+
+Now I will make a function that can get the api request data given the search term. \
+It will return the data frame with the data or null if the request is bad
+
+```{r}
+search_api <- function(query){
+
+api_url <- "https://api.rawg.io/api/games"
+
+response <- GET(
+  api_url,
+  query = list(
+    key = api_key, # Api key
+    search = query # Wii sports as our testing value.
+  )
+)
+
+if (status_code(response) == 200){
+  data <- fromJSON(content(response, "text", encoding = "UTF-8"))
+  game_review <- data$results
+  return(game_review)
+  }
+return(NULL) # If we have a bad response return null
+}
+```
+
+I will test this function on a popular series Call of Duty. I will search for a specific game "Call of Duty: Black Ops" \
+```{r}
+cod_response_df <- search_api("Call of Duty: Black Ops")
+head(cod_response_df)
+```
+I wanted to look at how this game shows up in our combined data.
+```{r}
+combined_data <- combined_wii
+
+cod_sales <- combined_data %>% 
+  filter(str_detect(Name, "Call of Duty"))
+head(cod_sales)
+```
+
+We can combine these like we did before with the Wii sports games. \
+This time the columns are already created so we have to also coalesce the data frames.\
+I will update the function I made to do this. \
+If we were doing it one by one we could combine it all in one step but I wanted a way that made the data frame step by step.
+
+```{r}
+# Update the function to handle the columns already being present.
+combine_data <- function(df, df_reviews){
+  # Select columns from reviews that we want to add.
+  head(df_reviews)
+  df_reviews <- df_reviews %>% select( # Select different rating to use, `rating` seems to be the main one.
+    Name = name,
+    rating, 
+    rating_top,
+    metacritic,
+    score,
+    ratings_count
+  )
+  
+  combined <- left_join(df, df_reviews, by = "Name") %>%
+  mutate(
+    rating = coalesce(rating.x, rating.y), # Because the dataframe already has these columns we can coalesce. This will take the non na value.
+    rating_top = coalesce(rating_top.x, rating_top.y),
+    metacritic = coalesce(metacritic.x, metacritic.y),
+    score = coalesce(score.x, score.y),
+    ratings_count = coalesce(ratings_count.x, ratings_count.y)
+    ) %>%
+  select(-ends_with(".x"), -ends_with(".y")) # Remove the .x and .y columns. These are the duplicates from the original left_join 
+  return(combined)
+}
+
+combined_data <- combine_data(combined_data, cod_response_df)
+(combined_data %>% filter(!is.na(rating) &  (str_detect(Name, "Call of Duty"))))  # Show the cod games that were filled
+```
+While looking at the data I notice that not all of the Call of Duty games from the reviews have matches to our sales data.\
+It is entirely possible that these data sets do not have complete overlap. I will leave these values as NA. If we have enough data I will leave it like this. \
+
+Now I want to iterate through the data frame based on null ratings. \
+I used the latest free version of chat gpt to help generate this code. \
+This code keeps track of the already tried rows
+```{r, cache = TRUE}
+attempted_ids <- character() # Keep track of attempted names
+```
+
+```{r, cache = TRUE}
+
+remaining_ids <- combined_data %>% # Get the names that still need to be tried
+  filter(is.na(rating)) %>% # Rows that have no rating
+  distinct(Name) # No need to run the same game twice(its separated by Platform)
+
+while(nrow(remaining_ids) > 0) { # while we have remaining ids
+
+  id <- remaining_ids$Name[1] # Get the name as id
+
+  # mark as attempted BEFORE api call
+  attempted_ids <- c(attempted_ids, id) # Update attempted_ids with the extra name
+  
+  api_result <- search_api(id) # Search for the name
+  print(id)
+  # update data frame
+  if (!is.null(api_result)) {
+    if(length(api_result) != 0) # Check empty/na api_result
+      combined_data <- combine_data(combined_data, api_result)
+}
+
+  # only unresolved AND unattempted ids 
+  remaining_ids <- combined_data %>% 
+    filter(is.na(rating)) %>%
+    distinct(Name) %>% 
+    filter(!Name %in% attempted_ids) #Names that are not attempted
+}
+```
+Now that I have the data, because I don't want to have to run the api request again to knit the project, and I still want the data to be accessible and reproducible I will save the data to a csv. 
+
+```{r}
+write.csv(df, "combined_data.csv", row.names = TRUE)
+```
+
+
+The most difficult part was getting the data, now that we have the data we can create graphs and such to try to find a pattern between the games sold and 
+```{r}
+combined_by_name <- combined_data %>%
+  group_by(Name) %>%
+  summarize()
+```

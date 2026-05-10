@@ -1,0 +1,244 @@
+Me:I am updating a dataframe with left_join and coalesce
+I am using an api call for the new information I am adding. 
+Each api call uses a row but can fill out multiple rows.
+I don't want to api call on rows that have already been filled Code for this.
+It is possible that a row does not fill itself from the api call.
+
+
+Chatgpt:A good pattern is:
+
+1. Keep your existing dataframe with partially-filled data.
+2. Filter to only rows that still need API data.
+3. Deduplicate the API queries if one API result can fill multiple rows.
+4. Call the API only once per unique lookup value.
+5. `left_join()` the results back.
+6. Use `coalesce()` to preserve existing values.
+
+Something like this in R with `dplyr`:
+
+```r
+library(dplyr)
+library(purrr)
+
+# Example:
+# df = your existing dataframe
+# Suppose "movie_id" is used for the API lookup
+# and we want to fill rating + votes
+
+# Only rows missing information
+needs_data <- df %>%
+  filter(is.na(rating) | is.na(votes))
+
+# Only unique API calls
+api_keys <- needs_data %>%
+  distinct(movie_id)
+
+# Example API function
+get_movie_data <- function(id) {
+
+  # pretend api call
+  # may return NA values too
+
+  tibble(
+    movie_id = id,
+    rating = runif(1, 1, 10),
+    votes = sample(1000:100000, 1)
+  )
+}
+
+# Perform ONE api call per unique key
+api_results <- api_keys %>%
+  mutate(data = map(movie_id, get_movie_data)) %>%
+  tidyr::unnest(data)
+
+# Join back and preserve existing values
+df_updated <- df %>%
+  left_join(api_results,
+            by = "movie_id",
+            suffix = c("", ".new")) %>%
+
+  mutate(
+    rating = coalesce(rating, rating.new),
+    votes = coalesce(votes, votes.new)
+  ) %>%
+
+  select(-ends_with(".new"))
+```
+
+The important part is this:
+
+```r
+filter(is.na(rating) | is.na(votes))
+```
+
+That prevents API calls for rows already filled.
+
+And this:
+
+```r
+distinct(movie_id)
+```
+
+prevents repeated API calls when multiple rows share the same lookup key.
+
+The nice thing is:
+
+* if the API fails to return data for a row, the original NA remains
+* future runs will try again automatically only for still-missing rows
+
+A very common improvement is to create a single “needs enrichment” flag:
+
+```r
+needs_api <- function(df) {
+  is.na(df$rating) | is.na(df$votes)
+}
+```
+
+then:
+
+```r
+needs_data <- df %>%
+  filter(needs_api(.))
+```
+
+which keeps the logic cleaner as the number of columns grows.
+
+
+Me:We may update other rows when we do previous rows. I dont want to run the query on these rows
+
+Then the key idea is:
+
+You should not loop row-by-row.
+
+Instead:
+
+* pick ONE unresolved row
+* do the API call
+* update ALL matching rows from that result
+* repeat only for rows still unresolved
+
+So you need a process like:
+
+```r
+while(any(is.na(df$rating))) {
+
+  # pick ONE unresolved lookup key
+  next_id <- df %>%
+    filter(is.na(rating)) %>%
+    slice(1) %>%
+    pull(movie_id)
+
+  # api call ONCE
+  api_result <- get_movie_data(next_id)
+
+  # update ALL rows that match
+  df <- df %>%
+    left_join(api_result,
+              by = "movie_id",
+              suffix = c("", ".new")) %>%
+    mutate(
+      rating = coalesce(rating, rating.new),
+      votes = coalesce(votes, votes.new)
+    ) %>%
+    select(-ends_with(".new"))
+}
+```
+
+The important behavior:
+
+Suppose:
+
+* row 5 calls the API
+* that API response fills rows 5, 9, and 14
+
+Then:
+
+* rows 9 and 14 are no longer NA
+* the loop skips them later automatically
+
+This avoids duplicate API calls entirely.
+
+A cleaner version is to track which lookup keys are already resolved:
+
+```r
+remaining_ids <- df %>%
+  filter(is.na(rating)) %>%
+  distinct(movie_id)
+
+while(nrow(remaining_ids) > 0) {
+
+  id <- remaining_ids$movie_id[1]
+
+  api_result <- get_movie_data(id)
+
+  df <- df %>%
+    left_join(api_result,
+              by = "movie_id",
+              suffix = c("", ".new")) %>%
+    mutate(
+      rating = coalesce(rating, rating.new)
+    ) %>%
+    select(-ends_with(".new"))
+
+  # recompute unresolved ids AFTER update
+  remaining_ids <- df %>%
+    filter(is.na(rating)) %>%
+    distinct(movie_id)
+}
+```
+
+That recomputation step is what prevents unnecessary future calls.
+
+Me: Its possible that we also are unable to fill a row after querying it
+
+Then you also need to track which IDs were already attempted.
+
+Otherwise you'll get an infinite loop retrying rows that can never be filled.
+
+Pattern:
+
+```r id="9w5h3z"
+attempted_ids <- character()
+
+remaining_ids <- df %>%
+  filter(is.na(rating)) %>%
+  distinct(movie_id)
+
+while(nrow(remaining_ids) > 0) {
+
+  id <- remaining_ids$movie_id[1]
+
+  # mark as attempted BEFORE api call
+  attempted_ids <- c(attempted_ids, id)
+
+  api_result <- get_movie_data(id)
+
+  # update dataframe
+  df <- df %>%
+    left_join(api_result,
+              by = "movie_id",
+              suffix = c("", ".new")) %>%
+    mutate(
+      rating = coalesce(rating, rating.new),
+      votes = coalesce(votes, votes.new)
+    ) %>%
+    select(-ends_with(".new"))
+
+  # only unresolved AND unattempted ids
+  remaining_ids <- df %>%
+    filter(is.na(rating)) %>%
+    distinct(movie_id) %>%
+    filter(!movie_id %in% attempted_ids)
+}
+```
+
+This handles all cases:
+
+| Situation                  | Behavior                 |
+| -------------------------- | ------------------------ |
+| API fills current row only | no repeat call           |
+| API fills multiple rows    | those rows skipped later |
+| API fills zero rows        | queried once only        |
+| Duplicate IDs in dataframe | queried once only        |
+
+This is usually the safest enrichment workflow for APIs + `left_join()` + `coalesce()`.
