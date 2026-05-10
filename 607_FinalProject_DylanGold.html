@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Dylan Gold">
+
+<title>607 Final Project</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="607_FinalProject_DylanGold_files/libs/clipboard/clipboard.min.js"></script>
+<script src="607_FinalProject_DylanGold_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="607_FinalProject_DylanGold_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="607_FinalProject_DylanGold_files/libs/quarto-html/popper.min.js"></script>
+<script src="607_FinalProject_DylanGold_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="607_FinalProject_DylanGold_files/libs/quarto-html/anchor.min.js"></script>
+<link href="607_FinalProject_DylanGold_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="607_FinalProject_DylanGold_files/libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="607_FinalProject_DylanGold_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="607_FinalProject_DylanGold_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="607_FinalProject_DylanGold_files/libs/bootstrap/bootstrap-efbb37e9afcc02144ebbc7afd12a776f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">607 Final Project</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Dylan Gold </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="approach" class="level1">
+<h1>Approach</h1>
+<p>For this project I will be collecting data on video game sales as well as video game reviews and seeing how factors like game sales and genre affect video game reviews.<br>
+I will limit the scope to finding a correlation/relationship between the sales a videogame has and the reviews it gets from Rawg.io</p>
+</section>
+<section id="collecting-data" class="level1">
+<h1>Collecting Data</h1>
+<p>To start this project we need to first collect the data.<br>
+I have chosen two data sources one is a csv from https://www.kaggle.com/datasets/volodymyrpivoshenko/video-game-sales-dataset<br>
+The other is using an api of a gaming review website rawg.io. This is a link to their api documentation https://api.rawg.io/docs/#tag/developers<br>
+</p>
+<p>First I will collect the data from the csv. This will serve as our base data that we will use to query the api.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(httr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(jsonlite)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringi)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/DylanGoldJ/607-Final-Project/refs/heads/main/video_games_sales.csv"</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> url,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_names =</span> <span class="cn">TRUE</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df, <span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 11
+   Rank Name           Platform Year  Genre Publisher NA_Sales EU_Sales JP_Sales
+  &lt;dbl&gt; &lt;chr&gt;          &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;        &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+1     1 Wii Sports     Wii      2006  Spor… Nintendo      41.5    29.0      3.77
+2     2 Super Mario B… NES      1985  Plat… Nintendo      29.1     3.58     6.81
+3     3 Mario Kart Wii Wii      2008  Raci… Nintendo      15.8    12.9      3.79
+4     4 Wii Sports Re… Wii      2009  Spor… Nintendo      15.8    11.0      3.28
+5     5 Pokemon Red/P… GB       1996  Role… Nintendo      11.3     8.89    10.2 
+# ℹ 2 more variables: Other_Sales &lt;dbl&gt;, Global_Sales &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>Now I also need to collect data from the api.<br>
+I will start with a simple example.<br>
+First I will load in my key</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>api_key <span class="ot">&lt;-</span> <span class="fu">Sys.getenv</span>(<span class="st">"RAWGIO_API_KEY"</span>) <span class="co"># Load api key from envrionment.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Because the api has way more total games than our data set we will query the data set for each game individually.<br>
+First I will try to get Wii Sports game info from the api.<br>
+</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>api_url <span class="ot">&lt;-</span> <span class="st">"https://api.rawg.io/api/games"</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>response <span class="ot">&lt;-</span> <span class="fu">GET</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  api_url,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">query =</span> <span class="fu">list</span>(</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">key =</span> api_key, <span class="co"># Api key</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">search =</span> <span class="st">"Wii Sports"</span> <span class="co"># Wii sports as our testing value.</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="fu">status_code</span>(response)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 200</code></pre>
+</div>
+</div>
+<p>We got a sucessful response. Now I will extract the data from the response</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">content</span>(response, <span class="st">"text"</span>, <span class="at">encoding =</span> <span class="st">"UTF-8"</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>game_review <span class="ot">&lt;-</span> data<span class="sc">$</span>results</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(game_review)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                             slug                              name playtime
+1                      wii-sports                        Wii Sports       55
+2               wii-sports-resort                 Wii Sports Resort        2
+3 pokepark-wii-pikachus-adventure PokePark Wii: Pikachu's Adventure        0
+4                 wii-sports-itch                 Wii sports (itch)        0
+5                 wii-sports-club                   Wii Sports Club       21
+6                 e-sport-manager                   E-Sport Manager        1
+                                       platforms
+1                                   11, Wii, wii
+2                                   11, Wii, wii
+3                                   11, Wii, wii
+4                                  171, Web, web
+5                               10, Wii U, wii-u
+6 4, 7, PC, Nintendo Switch, pc, nintendo-switch
+                                        stores   released   tba
+1                  6, Nintendo Store, nintendo 2006-11-19 FALSE
+2                  6, Nintendo Store, nintendo 2009-07-26 FALSE
+3                  6, Nintendo Store, nintendo 2010-11-02 FALSE
+4                             9, itch.io, itch 2023-04-09 FALSE
+5                  6, Nintendo Store, nintendo 2013-10-30 FALSE
+6 1, 6, Steam, Nintendo Store, steam, nintendo 2018-06-16 FALSE
+                                                                  background_image
+1       https://media.rawg.io/media/games/173/1739bdc5c33e85a0fa54b499a173690b.jpg
+2 https://media.rawg.io/media/screenshots/472/472c6954864d52a7681e7c8ef3d3a94b.jpg
+3       https://media.rawg.io/media/games/d15/d15da3cfeb0ab883caed37134b5c5c34.jpg
+4 https://media.rawg.io/media/screenshots/031/031b17a241ec3d1036c26b2c1872d816.jpg
+5 https://media.rawg.io/media/screenshots/650/650b76388f99fb913be50e0e3937d524.jpg
+6 https://media.rawg.io/media/screenshots/2ad/2ad379f560aa6daf4344f106dc754f0b.jpg
+  rating rating_top
+1   4.21          4
+2   4.22          4
+3   4.00          4
+4   0.00          0
+5   0.00          0
+6   0.00          0
+                                                                                    ratings
+1 4, 5, 3, 1, recommended, exceptional, meh, skip, 146, 94, 23, 5, 54.48, 35.07, 8.58, 1.87
+2   4, 5, 3, 1, recommended, exceptional, meh, skip, 75, 54, 11, 4, 52.08, 37.5, 7.64, 2.78
+3               4, 5, 3, 1, recommended, exceptional, meh, skip, 10, 6, 3, 1, 50, 30, 15, 5
+4                                                                                      NULL
+5                                                      3, 4, meh, recommended, 3, 1, 75, 25
+6                                               1, 5, skip, exceptional, 2, 1, 66.67, 33.33
+  ratings_count reviews_text_count added added_by_status.yet
+1           264                  4   489                  12
+2           142                  2   298                   8
+3            19                  1    56                   5
+4             0                  0     0                  NA
+5             4                  0    13                   3
+6             2                  0    74                   2
+  added_by_status.owned added_by_status.beaten added_by_status.toplay
+1                    89                    270                      3
+2                    55                    146                      7
+3                    11                     27                      6
+4                    NA                     NA                     NA
+5                     5                      2                      2
+6                    69                      1                      1
+  added_by_status.dropped added_by_status.playing metacritic suggestions_count
+1                     109                       6         76               177
+2                      75                       7         80               479
+3                       6                       1         62               220
+4                      NA                      NA         NA                 0
+5                       1                      NA         NA               282
+6                       1                      NA         NA               344
+              updated     id     score clip
+1 2026-02-21T19:47:50  25057  72.34808   NA
+2 2026-02-21T19:49:27  26002  37.27656   NA
+3 2024-11-27T23:36:39  26544  22.37658   NA
+4 2023-04-10T07:38:39 954422 22.276562   NA
+5 2023-08-11T12:57:49  27444 22.276562   NA
+6 2020-06-03T15:50:59  51478 21.282118   NA
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          tags
+1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             37796, 37797, exclusive, true exclusive, exclusive, true-exclusive, eng, eng, 4491, 3981, https://media.rawg.io/media/games/b7d/b7d3f1715fa8381a4e780173a197a615.jpg, https://media.rawg.io/media/games/d30/d30ef0c7dd4878161b1f781e297ae6a0.jpg
+2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             37796, 37797, exclusive, true exclusive, exclusive, true-exclusive, eng, eng, 4491, 3981, https://media.rawg.io/media/games/b7d/b7d3f1715fa8381a4e780173a197a615.jpg, https://media.rawg.io/media/games/d30/d30ef0c7dd4878161b1f781e297ae6a0.jpg
+3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          115, 5816, 1484, 1863, 731, Controller, console, skill, challenge, NES, controller, console, skill, challenge, nes, eng, eng, eng, eng, eng, 15017, 1390, 3533, 12773, 1337, https://media.rawg.io/media/games/04a/04a7e7e185fb51493bdcbe1693a8b3dc.jpg, https://media.rawg.io/media/games/075/0753492cda7ee3c9bd4a3ca673fd0c8c.jpg, https://media.rawg.io/media/screenshots/ec6/ec6eda0d3d08d023793486b253534c27.jpg, https://media.rawg.io/media/games/eb1/eb1ff1ffdab179ff7f0987d0266d4fe5.jpg, https://media.rawg.io/media/screenshots/ada/ada90672691bd75745ee88cd43d49657.jpg
+4                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         NULL
+5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            37796, 37797, exclusive, true exclusive, exclusive, true-exclusive, eng, eng, 4491, 3980, https://media.rawg.io/media/games/f24/f2493ea338fe7bd3c7d73750a85a0959.jpeg, https://media.rawg.io/media/games/4be/4be6a6ad0364751a96229c56bf69be59.jpg
+6 31, 42396, 42417, 42398, 42400, 42421, 42399, 42413, 42444, 42562, 42460, 42576, 42531, 42551, 42631, 42521, 42588, 169, 42474, Singleplayer, Для одного игрока, Экшен, Инди, Атмосфера, Стратегия, Казуальная игра, Симулятор, Песочница, Для всей семьи, Реализм, Изометрия, Спортивная игра, Менеджмент, Управление ресурсами, Экономика, Киберспорт, MOBA, Ячеечный инвентарь, singleplayer, dlia-odnogo-igroka, ekshen, indi-2, atmosfera, strategiia, kazualnaia-igra, simuliator, pesochnitsa, dlia-vsei-semi, realizm, izometriia, sportivnaia-igra, menedzhment, upravlenie-resursami, ekonomika, kibersport, moba, iacheechnyi-inventar, eng, rus, rus, rus, rus, rus, rus, rus, rus, rus, rus, rus, rus, rus, rus, rus, rus, eng, rus, 250833, 70700, 50554, 68749, 6083, 24813, 54922, 26133, 5742, 10884, 9134, 2843, 4672, 5452, 4114, 2475, 967, 712, 309, https://media.rawg.io/media/games/587/587588c64afbff80e6f444eb2e46f9da.jpg, https://media.rawg.io/media/games/b8c/b8c243eaa0fbac8115e0cdccac3f91dc.jpg, https://media.rawg.io/media/games/8cc/8cce7c0e99dcc43d66c8efd42f9d03e3.jpg, https://media.rawg.io/media/games/e04/e04963f3ac4c4fa83a1dc0b9231e50db.jpg, https://media.rawg.io/media/games/8a0/8a02f84a5916ede2f923b88d5f8217ba.jpg, https://media.rawg.io/media/games/879/879c930f9c6787c920153fa2df452eb3.jpg, https://media.rawg.io/media/games/852/8522935d8ab27b610a254b52de0da212.jpg, https://media.rawg.io/media/games/651/651ae84f2d5e36206aad90976a453329.jpg, https://media.rawg.io/media/games/713/713269608dc8f2f40f5a670a14b2de94.jpg, https://media.rawg.io/media/games/9fb/9fbf956a16249def7625ab5dc3d09515.jpg, https://media.rawg.io/media/games/ccd/ccd40e8f86c0ae10a082b610d31d4475.jpg, https://media.rawg.io/media/games/963/9639183ff27251b0b686acaa6aac0297.jpg, https://media.rawg.io/media/games/a1c/a1cea552040aecf9414548e209f9c0d8.jpg, https://media.rawg.io/media/games/476/4767c380895fd35a4f1b59016dc45967.jpg, https://media.rawg.io/media/screenshots/02b/02b2367620982ae26d04ed51d5c35505_apw2ZVh.jpg, https://media.rawg.io/media/games/6bc/6bc79f5bc023b1e6938f6eaf9926f073.jpg, https://media.rawg.io/media/screenshots/54f/54fcf1a626faa92afa3f5d2834dbc5ce.jpg, https://media.rawg.io/media/screenshots/713/71368ff253871f4453a8aa90f86ed262.jpg, https://media.rawg.io/media/screenshots/8d2/8d223357b0c68bb17af037b791e107df.jpg
+  esrb_rating.id esrb_rating.name esrb_rating.slug esrb_rating.name_en
+1             NA             &lt;NA&gt;             &lt;NA&gt;                &lt;NA&gt;
+2              1         Everyone         everyone            Everyone
+3              1         Everyone         everyone            Everyone
+4             NA             &lt;NA&gt;             &lt;NA&gt;                &lt;NA&gt;
+5             NA             &lt;NA&gt;             &lt;NA&gt;                &lt;NA&gt;
+6             NA             &lt;NA&gt;             &lt;NA&gt;                &lt;NA&gt;
+  esrb_rating.name_ru user_game reviews_count saturated_color dominant_color
+1                &lt;NA&gt;        NA           268          0f0f0f         0f0f0f
+2            Для всех        NA           144          0f0f0f         0f0f0f
+3            Для всех        NA            20          0f0f0f         0f0f0f
+4                &lt;NA&gt;        NA             0          0f0f0f         0f0f0f
+5                &lt;NA&gt;        NA             4          0f0f0f         0f0f0f
+6                &lt;NA&gt;        NA             3          0f0f0f         0f0f0f
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  short_screenshots
+1        -1, 248457, 248458, 248459, 248460, 786231, 786232, https://media.rawg.io/media/games/173/1739bdc5c33e85a0fa54b499a173690b.jpg, https://media.rawg.io/media/screenshots/d4c/d4cafc5b5fa5b09cedb6c453b4027796.jpg, https://media.rawg.io/media/screenshots/197/1971ea633720a92f79a7c7f0b2bf407f.jpg, https://media.rawg.io/media/screenshots/502/50277d7dcc8350491131185a77c776d1.jpg, https://media.rawg.io/media/screenshots/3a0/3a0610755754b6ad7befc022ad89016a.jpg, https://media.rawg.io/media/screenshots/51d/51db9229b2f0351cef0f8d29f260e2a4.jpg, https://media.rawg.io/media/screenshots/c0e/c0ee5ca366d5e754db18d4ba73263f72.jpg
+2 -1, 3882985, 252124, 252125, 252126, 252127, 252128, https://media.rawg.io/media/screenshots/472/472c6954864d52a7681e7c8ef3d3a94b.jpg, https://media.rawg.io/media/screenshots/044/044e38975ee7fc59b595933c265353c4.jpg, https://media.rawg.io/media/screenshots/58f/58f857964b72b04ced97df53229a4b0f.jpg, https://media.rawg.io/media/screenshots/37b/37b1f533d0396eaa108eeaff58d3f035.jpg, https://media.rawg.io/media/screenshots/142/1423190d03f47b78d1c941b53a208694.jpg, https://media.rawg.io/media/screenshots/374/374c393671900cdbb68969561b092270.jpg, https://media.rawg.io/media/screenshots/ea2/ea2471a5c85f88224d89aee02ab61418.jpg
+3        -1, 265834, 265835, 265836, 265837, 265838, 799037, https://media.rawg.io/media/games/d15/d15da3cfeb0ab883caed37134b5c5c34.jpg, https://media.rawg.io/media/screenshots/0c1/0c180ea0ac0771b968b578a4a64cf5bb.jpg, https://media.rawg.io/media/screenshots/90e/90ebd6fa665d199f4e80c8ae308f6930.jpg, https://media.rawg.io/media/screenshots/7bf/7bfbf1e8b302d9dbb38d7991dae27ebd.jpg, https://media.rawg.io/media/screenshots/826/826da2e6fef9de471efbd26cc5c33640.jpg, https://media.rawg.io/media/screenshots/043/04359615bdc819bcc28c380421afd720.jpg, https://media.rawg.io/media/screenshots/cc8/cc8e21bb0430327ed3a048e0ebdd3de8.jpg
+4                                                                                                                                                                                                                                                                                                                                                                                                                                                                   -1, 3861999, https://media.rawg.io/media/screenshots/031/031b17a241ec3d1036c26b2c1872d816.jpg, https://media.rawg.io/media/screenshots/031/031b17a241ec3d1036c26b2c1872d816.jpg
+5  -1, 263466, 263467, 263468, 263469, 263470, 263471, https://media.rawg.io/media/screenshots/650/650b76388f99fb913be50e0e3937d524.jpg, https://media.rawg.io/media/screenshots/9fb/9fbd7f4b4eb73eb0692b5d5719e06a52.jpg, https://media.rawg.io/media/screenshots/207/207b5204ff3e88ca1c728f46e0aebd66.jpg, https://media.rawg.io/media/screenshots/62c/62c71d49624d5f96b5d38ddaaa299e7f.jpg, https://media.rawg.io/media/screenshots/991/99165daedd777649f6944208ec48cd91.jpg, https://media.rawg.io/media/screenshots/ed1/ed1f9d0420f3d62abf3aed844bf9dd7c.jpg, https://media.rawg.io/media/screenshots/b90/b90711abc86414099d36ad3e10523fdb.jpg
+6  -1, 714772, 714773, 714774, 714775, 714776, 714777, https://media.rawg.io/media/screenshots/2ad/2ad379f560aa6daf4344f106dc754f0b.jpg, https://media.rawg.io/media/screenshots/ce6/ce6c1655b9987b605c888691eddb6e87.jpg, https://media.rawg.io/media/screenshots/e1f/e1fc73b6f1934bf2afe8d81139c2429b.jpg, https://media.rawg.io/media/screenshots/385/3855f52eb3e12a5220e2cb1a5872cfc7.jpg, https://media.rawg.io/media/screenshots/af2/af2f8d8bd600dc33a5db7697ec82e340.jpg, https://media.rawg.io/media/screenshots/124/1242cb5d796fe5945cba0e93b703fde9.jpg, https://media.rawg.io/media/screenshots/994/99474e6b6908115f4e03b594c80e0da1.jpg
+                  parent_platforms
+1            7, Nintendo, nintendo
+2            7, Nintendo, nintendo
+3            7, Nintendo, nintendo
+4                     14, Web, web
+5            7, Nintendo, nintendo
+6 1, 7, PC, Nintendo, pc, nintendo
+                                                                                                       genres
+1                                                                                          15, Sports, sports
+2                                                                                          15, Sports, sports
+3                                              19, 3, 4, Family, Adventure, Action, family, adventure, action
+4                                                                                                        NULL
+5                                                                                                        NULL
+6 4, 10, 14, 15, 51, Action, Strategy, Simulation, Sports, Indie, action, strategy, simulation, sports, indie
+  community_rating
+1               NA
+2               NA
+3               NA
+4                0
+5                0
+6                0</code></pre>
+</div>
+</div>
+<p>We can see that we were given a list of games that match the search query. The top match Wii Sports is exactly what we searched for.<br>
+We can also see that the second game from this search is also the 4th ranked game on our games sold data frame.<br>
+There will be times when we get multiple games from a search query that are in our games sold data frame.<br>
+To minimize the number of requests (I have only 20,000 this month) I will try to fill in this data as well from each search.<br>
+</p>
+<p>This was a challenge I had, making sure to not waste my limited requests. Initially my plan was to search each game one at a time. While I may have had enough requests to do this it would be a lot slower as well as waste requests that I may need for the future.<br>
+Because the search was not an exact match, we can get values that we did not search directly which helps maintain our query limit.</p>
+<p>First I will make a function that takes the values from the request for the game and binds them to the original data frame with a left join.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>game_data <span class="ot">&lt;-</span> df <span class="co"># Copy of df to work on</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Make new columns in game_data</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># This function will take the sold df and the reviews df and fill in columns for the game_data df based on the df_reviews.</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>combine_data <span class="ot">&lt;-</span> <span class="cf">function</span>(df, df_reviews){</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Select columns from reviews that we want to add.</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(df_reviews)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  df_reviews <span class="ot">&lt;-</span> df_reviews <span class="sc">%&gt;%</span> <span class="fu">select</span>( <span class="co"># Select different rating to use, `rating` seems to be the main one.</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">Name =</span> name,</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    rating, </span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    rating_top,</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    metacritic,</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    score,</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    ratings_count</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  combined <span class="ot">&lt;-</span> <span class="fu">left_join</span>(df, df_reviews, <span class="at">by =</span> <span class="st">"Name"</span>)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(combined)</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>combined_wii <span class="ot">&lt;-</span> <span class="fu">combine_data</span>(game_data, game_review)</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(combined_wii)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 16
+   Rank Name           Platform Year  Genre Publisher NA_Sales EU_Sales JP_Sales
+  &lt;dbl&gt; &lt;chr&gt;          &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;        &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+1     1 Wii Sports     Wii      2006  Spor… Nintendo      41.5    29.0      3.77
+2     2 Super Mario B… NES      1985  Plat… Nintendo      29.1     3.58     6.81
+3     3 Mario Kart Wii Wii      2008  Raci… Nintendo      15.8    12.9      3.79
+4     4 Wii Sports Re… Wii      2009  Spor… Nintendo      15.8    11.0      3.28
+5     5 Pokemon Red/P… GB       1996  Role… Nintendo      11.3     8.89    10.2 
+6     6 Tetris         GB       1989  Puzz… Nintendo      23.2     2.26     4.22
+# ℹ 7 more variables: Other_Sales &lt;dbl&gt;, Global_Sales &lt;dbl&gt;, rating &lt;dbl&gt;,
+#   rating_top &lt;int&gt;, metacritic &lt;int&gt;, score &lt;chr&gt;, ratings_count &lt;int&gt;</code></pre>
+</div>
+</div>
+<p>We can see that there are several columns that got filled in below is some of the values</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(combined_wii <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(rating))) <span class="co"># Check rows with a rating</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 16
+   Rank Name           Platform Year  Genre Publisher NA_Sales EU_Sales JP_Sales
+  &lt;dbl&gt; &lt;chr&gt;          &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;        &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+1     1 Wii Sports     Wii      2006  Spor… Nintendo     41.5     29.0      3.77
+2     3 Mario Kart Wii Wii      2008  Raci… Nintendo     15.8     12.9      3.79
+3     4 Wii Sports Re… Wii      2009  Spor… Nintendo     15.8     11.0      3.28
+4     8 Wii Play       Wii      2006  Misc  Nintendo     14.0      9.2      2.93
+5     9 New Super Mar… Wii      2009  Plat… Nintendo     14.6      7.06     4.7 
+6    14 Wii Fit        Wii      2007  Spor… Nintendo      8.94     8.03     3.6 
+# ℹ 7 more variables: Other_Sales &lt;dbl&gt;, Global_Sales &lt;dbl&gt;, rating &lt;dbl&gt;,
+#   rating_top &lt;int&gt;, metacritic &lt;int&gt;, score &lt;chr&gt;, ratings_count &lt;int&gt;</code></pre>
+</div>
+</div>
+<p>Now I will make a function that can get the api request data given the search term.<br>
+It will return the data frame with the data or null if the request is bad</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>search_api <span class="ot">&lt;-</span> <span class="cf">function</span>(query){</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>api_url <span class="ot">&lt;-</span> <span class="st">"https://api.rawg.io/api/games"</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>response <span class="ot">&lt;-</span> <span class="fu">GET</span>(</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  api_url,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">query =</span> <span class="fu">list</span>(</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">key =</span> api_key, <span class="co"># Api key</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">search =</span> query <span class="co"># Wii sports as our testing value.</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">status_code</span>(response) <span class="sc">==</span> <span class="dv">200</span>){</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">content</span>(response, <span class="st">"text"</span>, <span class="at">encoding =</span> <span class="st">"UTF-8"</span>))</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  game_review <span class="ot">&lt;-</span> data<span class="sc">$</span>results</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(game_review)</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="fu">return</span>(<span class="cn">NULL</span>) <span class="co"># If we have a bad response return null</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>I will test this function on a popular series Call of Duty. I will search for a specific game “Call of Duty: Black Ops”<br>
+</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>cod_response_df <span class="ot">&lt;-</span> <span class="fu">search_api</span>(<span class="st">"Call of Duty: Black Ops"</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cod_response_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                             slug                             name playtime
+1          call-of-duty-black-ops          Call of Duty: Black Ops        9
+2        call-of-duty-black-ops-6        Call of Duty: Black Ops 6        0
+3        call-of-duty-black-ops-7        Call of Duty: Black Ops 7        0
+4                cod-black-ops-ii       Call of Duty: Black Ops II        5
+5               cod-black-ops-iii      Call of Duty: Black Ops III       16
+6 call-of-duty-black-ops-cold-war Call of Duty: Black Ops Cold War       11
+                                                                                                                                                          platforms
+1 4, 1, 3, 9, 5, 14, 16, 11, PC, Xbox One, iOS, Nintendo DS, macOS, Xbox 360, PlayStation 3, Wii, pc, xbox-one, ios, nintendo-ds, macos, xbox360, playstation3, wii
+2                                                                                  4, 187, 186, PC, PlayStation 5, Xbox Series S/X, pc, playstation5, xbox-series-x
+3                                                                                  4, 187, 186, PC, PlayStation 5, Xbox Series S/X, pc, playstation5, xbox-series-x
+4                                                        4, 1, 14, 16, 10, PC, Xbox One, Xbox 360, PlayStation 3, Wii U, pc, xbox-one, xbox360, playstation3, wii-u
+5                                         4, 1, 18, 14, 16, PC, Xbox One, PlayStation 4, Xbox 360, PlayStation 3, pc, xbox-one, playstation4, xbox360, playstation3
+6                          4, 187, 1, 18, 186, PC, PlayStation 5, Xbox One, PlayStation 4, Xbox Series S/X, pc, playstation5, xbox-one, playstation4, xbox-series-x
+                                                                                                                             stores
+1 1, 2, 4, 6, 7, Steam, Xbox Store, App Store, Nintendo Store, Xbox 360 Store, steam, xbox-store, apple-appstore, nintendo, xbox360
+2                                                                                                                   1, Steam, steam
+3                                                                                                                   1, Steam, steam
+4                               1, 2, 6, 7, Steam, Xbox Store, Nintendo Store, Xbox 360 Store, steam, xbox-store, nintendo, xbox360
+5                   1, 3, 2, 7, Steam, PlayStation Store, Xbox Store, Xbox 360 Store, steam, playstation-store, xbox-store, xbox360
+6                                               1, 3, 2, Steam, PlayStation Store, Xbox Store, steam, playstation-store, xbox-store
+    released   tba
+1 2010-11-09 FALSE
+2 2024-10-24 FALSE
+3 2025-11-13 FALSE
+4 2012-11-13 FALSE
+5 2015-11-06 FALSE
+6 2020-11-13 FALSE
+                                                            background_image
+1 https://media.rawg.io/media/games/410/41033a495ce8f7fd4b0934bdb975f12a.jpg
+2 https://media.rawg.io/media/games/e89/e89f9a409bce5d36873f65ea9659c36e.jpg
+3 https://media.rawg.io/media/games/4ca/4cabe38446288beb37fc73b2fe047b08.jpg
+4 https://media.rawg.io/media/games/8ee/8eed88e297441ef9202b5d1d35d7d86f.jpg
+5 https://media.rawg.io/media/games/fd6/fd6a1eecd3ec0f875f1924f3656b7dd9.jpg
+6 https://media.rawg.io/media/games/6b1/6b14dc4cc1785e396580c69165e55d2d.jpg
+  rating rating_top
+1   4.05          4
+2   3.86          4
+3   1.63          1
+4   3.96          4
+5   3.27          3
+6   3.80          4
+                                                                                        ratings
+1    4, 5, 3, 1, recommended, exceptional, meh, skip, 1058, 537, 227, 69, 55.95, 28.4, 12, 3.65
+2      4, 3, 5, 1, recommended, meh, exceptional, skip, 76, 23, 13, 2, 66.67, 20.18, 11.4, 1.75
+3                                                          1, 3, skip, meh, 13, 6, 68.42, 31.58
+4  4, 5, 3, 1, recommended, exceptional, meh, skip, 783, 356, 255, 53, 54.11, 24.6, 17.62, 3.66
+5 3, 4, 1, 5, meh, recommended, skip, exceptional, 602, 568, 212, 135, 39.68, 37.44, 13.97, 8.9
+6    4, 5, 3, 1, recommended, exceptional, meh, skip, 251, 58, 57, 26, 64.03, 14.8, 14.54, 6.63
+  ratings_count reviews_text_count added added_by_status.yet
+1          1872                 13  6982                 131
+2           112                  1   321                  30
+3            19                  0    65                  18
+4          1435                  5  6154                 113
+5          1504                  6  7264                 231
+6           378                  9  2585                 159
+  added_by_status.owned added_by_status.beaten added_by_status.toplay
+1                  4036                   2391                    113
+2                    46                    122                     78
+3                    15                      6                     13
+4                  3875                   1703                    120
+5                  5178                   1016                    165
+6                  1647                    409                    231
+  added_by_status.dropped added_by_status.playing metacritic suggestions_count
+1                     286                      25         81               708
+2                      26                      19         NA               422
+3                       7                       6         NA               230
+4                     321                      22         74               625
+5                     610                      64         73               571
+6                     100                      39         76               471
+              updated      id     score clip
+1 2026-05-02T06:56:24     865 109.19273   NA
+2 2026-05-02T06:57:45  983212  73.12896   NA
+3 2026-04-12T18:34:57 1007995  73.12896   NA
+4 2026-05-02T06:58:21   14446  72.19404   NA
+5 2026-05-02T06:58:39     906  70.66635   NA
+6 2026-05-02T06:58:00  481910  69.86627   NA
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   tags
+1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           31, 42396, 42417, 42392, 40847, 7, 42425, 42394, 18, 118, 411, 42428, 42429, 8, 42435, 40845, 16, 30, 42427, 9, 42491, 26, 42433, 42538, 42416, 115, 63, 42544, 42453, 70, 42430, 42431, 81, 40856, 305, 42437, 42668, 251, 49992, Singleplayer, Для одного игрока, Экшен, Приключение, Steam Achievements, Multiplayer, Для нескольких игроков, Глубокий сюжет, Co-op, Story Rich, cooperative, Шутер, От первого лица, First-Person, Шедевр, Partial Controller Support, Horror, FPS, Шутер от первого лица, Online Co-Op, Мясо, Gore, Совместная игра по сети, Бесплатная игра, Контроллер, Controller, Zombies, Зомби, ММО, War, Война, Военные действия, Military, Valve Anti-Cheat enabled, Linear, Линейная, Холодная война, Cold War, first person shooter, singleplayer, dlia-odnogo-igroka, ekshen, prikliuchenie, steam-achievements, multiplayer, dlia-neskolkikh-igrokov, glubokii-siuzhet, co-op, story-rich, cooperative, shuter, ot-pervogo-litsa, first-person, shedevr, partial-controller-support, horror, fps, shuter-ot-pervogo-litsa, online-co-op, miaso, gore, sovmestnaia-igra-po-seti, besplatnaia-igra, kontroller, controller, zombies, zombi-2, mmo-2, war, voina, voennye-deistviia, military, valve-anti-cheat-enabled, linear, lineinaia, kholodnaia-voina, cold-war, first-person-shooter-3, eng, rus, rus, rus, eng, eng, rus, rus, eng, eng, eng, rus, rus, eng, rus, eng, eng, eng, rus, eng, rus, eng, rus, rus, rus, eng, eng, rus, rus, eng, rus, rus, eng, eng, eng, rus, rus, eng, eng, 251028, 70855, 50629, 49233, 51821, 42592, 12960, 18148, 14415, 27291, 6600, 11981, 16517, 37441, 1059, 14004, 49208, 15001, 6982, 7700, 4962, 6681, 1226, 9880, 9499, 15057, 11216, 3567, 2875, 10104, 3191, 2513, 2529, 105, 9764, 9707, 341, 313, 8, https://media.rawg.io/media/games/d58/d588947d4286e7b5e0e12e1bea7d9844.jpg, https://media.rawg.io/media/games/021/021c4e21a1824d2526f925eff6324653.jpg, https://media.rawg.io/media/games/587/587588c64afbff80e6f444eb2e46f9da.jpg, https://media.rawg.io/media/games/bc0/bc06a29ceac58652b684deefe7d56099.jpg, https://media.rawg.io/media/games/f46/f466571d536f2e3ea9e815ad17177501.jpg, https://media.rawg.io/media/games/490/49016e06ae2103881ff6373248843069.jpg, https://media.rawg.io/media/games/b8c/b8c243eaa0fbac8115e0cdccac3f91dc.jpg, https://media.rawg.io/media/games/490/49016e06ae2103881ff6373248843069.jpg, https://media.rawg.io/media/games/736/73619bd336c894d6941d926bfd563946.jpg, https://media.rawg.io/media/games/2ba/2bac0e87cf45e5b508f227d281c9252a.jpg, https://media.rawg.io/media/games/dd5/dd50d4266915d56dd5b63ae1bf72606a.jpg, https://media.rawg.io/media/games/511/5118aff5091cb3efec399c808f8c598f.jpg, https://media.rawg.io/media/games/511/5118aff5091cb3efec399c808f8c598f.jpg, https://media.rawg.io/media/games/1bd/1bd2657b81eb0c99338120ad444b24ff.jpg, https://media.rawg.io/media/games/021/021c4e21a1824d2526f925eff6324653.jpg, https://media.rawg.io/media/games/8e4/8e4de3f54ac659e08a7ba6a2b731682a.jpg, https://media.rawg.io/media/games/e6d/e6de699bd788497f4b52e2f41f9698f2.jpg, https://media.rawg.io/media/games/c80/c80bcf321da44d69b18a06c04d942662.jpg, https://media.rawg.io/media/games/b8c/b8c243eaa0fbac8115e0cdccac3f91dc.jpg, https://media.rawg.io/media/games/530/5302dd22a190e664531236ca724e8726.jpg, https://media.rawg.io/media/games/8d6/8d69eb6c32ed6acfd75f82d532144993.jpg, https://media.rawg.io/media/games/3ea/3ea3c9bbd940b6cb7f2139e42d3d443f.jpg, https://media.rawg.io/media/games/73e/73eecb8909e0c39fb246f457b5d6cbbe.jpg, https://media.rawg.io/media/games/11f/11fd681c312c14644ab360888dba3486.jpg, https://media.rawg.io/media/games/4cb/4cb855e8ef1578415a928e53c9f51867.png, https://media.rawg.io/media/games/fc3/fc30790a3b3c738d7a271b02c1e26dc2.jpg, https://media.rawg.io/media/games/686/686909717c3aa01518bc42ae2bf4259e.jpg, https://media.rawg.io/media/games/7a2/7a2500ee8b2c0e1ff268bb4479463dea.jpg, https://media.rawg.io/media/games/2fd/2fd1b58116b10cc1f4442bee5593ca7c.jpg, https://media.rawg.io/media/games/8ee/8eed88e297441ef9202b5d1d35d7d86f.jpg, https://media.rawg.io/media/games/d7d/d7d33daa1892e2468cd0263d5dfc957e.jpg, https://media.rawg.io/media/games/e8f/e8f923180ecb9614ec564a15937cfd9e.jpg, https://media.rawg.io/media/games/ccc/ccc0d5396e3331d58e5eb58a6a1fa1b7.jpg, https://media.rawg.io/media/games/78d/78dfae12fb8c5b16cd78648553071e0a.jpg, https://media.rawg.io/media/games/736/736c0eaec96d848d7824b33298a182f2.jpg, https://media.rawg.io/media/games/a14/a14acef284eaa4854f83c99e80fc15d8.jpg, https://media.rawg.io/media/games/6af/6afa633097ba04b5985680309d41120d.jpg, https://media.rawg.io/media/games/d1e/d1e70ce3762efcfc170c6bd067d7e9e3.jpg, https://media.rawg.io/media/games/fee/fee0100afd87b52bfbd33e26689fa26c.jpg
+2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            31, 42396, 42417, 40847, 7, 40836, 42425, 42394, 18, 118, 42442, 36, 411, 42428, 42429, 8, 30, 42427, 9, 42491, 26, 42402, 34, 157, 40832, 42434, 70, 40837, 42430, 40833, 42460, 77, 42431, 81, 45878, 171, 217, 70351, 42659, 163, 87088, 42615, 262, 66536, Singleplayer, Для одного игрока, Экшен, Steam Achievements, Multiplayer, Full controller support, Для нескольких игроков, Глубокий сюжет, Co-op, Story Rich, Открытый мир, Open World, cooperative, Шутер, От первого лица, First-Person, FPS, Шутер от первого лица, Online Co-Op, Мясо, Gore, Насилие, Violent, PvP, Cross-Platform Multiplayer, Игрок против игрока, War, In-App Purchases, Война, Captions available, Реализм, Realistic, Военные действия, Military, Online PvP, PvE, Romance, Сетевой кооператив, Совместная кампания, Co-op Campaign, Игрок против ИИ, Капитализм, Capitalism, Романтика, singleplayer, dlia-odnogo-igroka, ekshen, steam-achievements, multiplayer, full-controller-support, dlia-neskolkikh-igrokov, glubokii-siuzhet, co-op, story-rich, otkrytyi-mir, open-world, cooperative, shuter, ot-pervogo-litsa, first-person, fps, shuter-ot-pervogo-litsa, online-co-op, miaso, gore, nasilie, violent, pvp, cross-platform-multiplayer, igrok-protiv-igroka, war, in-app-purchases, voina, captions-available, realizm, realistic, voennye-deistviia, military, online-pvp, pve, romance, setevoi-kooperativ, sovmestnaia-kampaniia, co-op-campaign, igrok-protiv-ii, kapitalizm, capitalism, romantika, eng, rus, rus, eng, eng, eng, rus, rus, eng, eng, rus, eng, eng, rus, rus, eng, eng, rus, eng, rus, eng, rus, eng, eng, eng, rus, eng, eng, rus, eng, rus, eng, rus, eng, eng, eng, eng, rus, rus, eng, rus, rus, eng, eng, 250835, 70701, 50554, 51712, 42555, 24145, 12936, 18117, 14392, 27260, 7452, 9266, 6588, 11967, 16473, 37397, 14989, 6971, 7682, 4962, 6670, 6814, 7852, 12048, 3161, 7218, 10101, 3419, 3188, 1485, 9134, 9156, 2511, 2527, 6411, 7983, 9867, 2997, 568, 546, 5468, 1225, 1280, 4515, https://media.rawg.io/media/games/7cf/7cfc9220b401b7a300e409e539c9afd5.jpg, https://media.rawg.io/media/games/26d/26d4437715bee60138dab4a7c8c59c92.jpg, https://media.rawg.io/media/games/d58/d588947d4286e7b5e0e12e1bea7d9844.jpg, https://media.rawg.io/media/games/6cd/6cd653e0aaef5ff8bbd295bf4bcb12eb.jpg, https://media.rawg.io/media/games/ec3/ec3a7db7b8ab5a71aad622fe7c62632f.jpg, https://media.rawg.io/media/games/8cc/8cce7c0e99dcc43d66c8efd42f9d03e3.jpg, https://media.rawg.io/media/games/490/49016e06ae2103881ff6373248843069.jpg, https://media.rawg.io/media/games/4be/4be6a6ad0364751a96229c56bf69be59.jpg, https://media.rawg.io/media/games/8cc/8cce7c0e99dcc43d66c8efd42f9d03e3.jpg, https://media.rawg.io/media/games/d82/d82990b9c67ba0d2d09d4e6fa88885a7.jpg, https://media.rawg.io/media/games/34b/34b1f1850a1c06fd971bc6ab3ac0ce0e.jpg, https://media.rawg.io/media/games/618/618c2031a07bbff6b4f611f10b6bcdbc.jpg, https://media.rawg.io/media/games/2ba/2bac0e87cf45e5b508f227d281c9252a.jpg, https://media.rawg.io/media/games/d82/d82990b9c67ba0d2d09d4e6fa88885a7.jpg, https://media.rawg.io/media/games/511/5118aff5091cb3efec399c808f8c598f.jpg, https://media.rawg.io/media/games/26d/26d4437715bee60138dab4a7c8c59c92.jpg, https://media.rawg.io/media/games/1bd/1bd2657b81eb0c99338120ad444b24ff.jpg, https://media.rawg.io/media/games/511/5118aff5091cb3efec399c808f8c598f.jpg, https://media.rawg.io/media/games/aa3/aa36ba4b486a03ddfaef274fb4f5afd4.jpg, https://media.rawg.io/media/games/8d6/8d69eb6c32ed6acfd75f82d532144993.jpg, https://media.rawg.io/media/games/5be/5bec14622f6faf804a592176577c1347.jpg, https://media.rawg.io/media/games/4be/4be6a6ad0364751a96229c56bf69be59.jpg, https://media.rawg.io/media/games/5a4/5a44112251d70a25291cc33757220fce.jpg, https://media.rawg.io/media/games/511/5118aff5091cb3efec399c808f8c598f.jpg, https://media.rawg.io/media/games/48e/48e63bbddeddbe9ba81942772b156664.jpg, https://media.rawg.io/media/games/9af/9af24c1886e2c7b52a4a2c65aa874638.jpg, https://media.rawg.io/media/games/410/41033a495ce8f7fd4b0934bdb975f12a.jpg, https://media.rawg.io/media/games/447/4470c1e76f01acfaf5af9c207d1c1c92.jpg, https://media.rawg.io/media/games/2fe/2feec1ba840f467a2280061b9e665c6e.jpg, https://media.rawg.io/media/games/fee/fee0100afd87b52bfbd33e26689fa26c.jpg, https://media.rawg.io/media/games/ccd/ccd40e8f86c0ae10a082b610d31d4475.jpg, https://media.rawg.io/media/screenshots/f34/f34c86335d0c51baa582aa93fa2d3f55.jpg, https://media.rawg.io/media/games/106/1069e754e7e6012b0cf42b4b04704792.jpg, https://media.rawg.io/media/games/106/1069e754e7e6012b0cf42b4b04704792.jpg, https://media.rawg.io/media/games/742/7424c1f7d0a8da9ae29cd866f985698b.jpg, https://media.rawg.io/media/games/5dd/5dd4d2dd986d2826800bc37fff64aa4f.jpg, https://media.rawg.io/media/screenshots/e0a/e0abaefbcc99ef995be57d857806f2d2.jpeg, https://media.rawg.io/media/screenshots/2fa/2faa93b7882a018ac21a1f9cc5176579.jpg, https://media.rawg.io/media/screenshots/ac6/ac662ae439dfa894da4abbc5e707b6b1.jpg, https://media.rawg.io/media/games/253/2538c831423559834329741e44d3c718.jpg, https://media.rawg.io/media/screenshots/8f7/8f71e26d9cb5cccdf6324c3037def4f0.jpg, https://media.rawg.io/media/games/1af/1af8edc7491c6d9d0776fc423d93548d.jpg, https://media.rawg.io/media/screenshots/367/3672ba0fe3f7cf0fe4a02fd768fad3ef.jpg, https://media.rawg.io/media/screenshots/d33/d3386bb608c067644c84209aff2d7680.jpg
+3 31, 42396, 42417, 40847, 7, 42425, 42394, 18, 118, 411, 42428, 42429, 8, 40845, 30, 42427, 9, 26, 42402, 34, 157, 40832, 63, 42434, 42544, 70, 40837, 42430, 40833, 42529, 192, 110, 167, 42431, 42451, 81, 45878, 42623, 171, 42655, 285, 42652, 274, 87088, 91537, 92228, 92227, 92237, 92225, 92132, 92231, 92233, 92236, 92234, Singleplayer, Для одного игрока, Экшен, Steam Achievements, Multiplayer, Для нескольких игроков, Глубокий сюжет, Co-op, Story Rich, cooperative, Шутер, От первого лица, First-Person, Partial Controller Support, FPS, Шутер от первого лица, Online Co-Op, Gore, Насилие, Violent, PvP, Cross-Platform Multiplayer, Zombies, Игрок против игрока, Зомби, War, In-App Purchases, Война, Captions available, Для взрослых, Mature, Cinematic, Futuristic, Военные действия, Будущее, Military, Online PvP, Кинематографичная, PvE, Психологическая, Psychological, Кастомизация оружия, Gun Customization, Игрок против ИИ, HDR available, Stereo Sound, Custom Volume Controls, Surround Sound, Playable without Timed Input, Сцены жестокости, Camera Comfort, Color Alternatives, Subtitle Options, Adjustable Text Size, singleplayer, dlia-odnogo-igroka, ekshen, steam-achievements, multiplayer, dlia-neskolkikh-igrokov, glubokii-siuzhet, co-op, story-rich, cooperative, shuter, ot-pervogo-litsa, first-person, partial-controller-support, fps, shuter-ot-pervogo-litsa, online-co-op, gore, nasilie, violent, pvp, cross-platform-multiplayer, zombies, igrok-protiv-igroka, zombi-2, war, in-app-purchases, voina, captions-available, dlia-vzroslykh, mature, cinematic, futuristic, voennye-deistviia, budushchee, military, online-pvp, kinematografichnaia, pve, psikhologicheskaia, psychological, kastomizatsiia-oruzhiia, gun-customization, igrok-protiv-ii, hdr-available, stereo-sound, custom-volume-controls, surround-sound-2, playable-without-timed-input, stseny-zhestokosti, camera-comfort, color-alternatives, subtitle-options, adjustable-text-size, eng, rus, rus, eng, eng, rus, rus, eng, eng, eng, rus, rus, eng, eng, eng, rus, eng, eng, rus, eng, eng, eng, eng, rus, rus, eng, eng, rus, eng, rus, eng, eng, eng, rus, rus, eng, eng, rus, eng, rus, eng, rus, eng, rus, eng, eng, eng, eng, eng, rus, eng, eng, eng, eng, 250834, 70701, 50554, 51712, 42555, 12936, 18117, 14392, 27260, 6588, 11967, 16473, 37397, 13990, 14989, 6971, 7682, 6670, 6814, 7852, 12048, 3161, 11212, 7218, 3563, 10101, 3419, 3188, 1485, 4584, 4783, 3381, 6923, 2511, 5058, 2527, 6411, 3289, 7983, 2701, 2802, 857, 841, 5468, 198, 1832, 3295, 450, 3302, 572, 1075, 552, 305, 250, https://media.rawg.io/media/games/bc0/bc06a29ceac58652b684deefe7d56099.jpg, https://media.rawg.io/media/games/26d/26d4437715bee60138dab4a7c8c59c92.jpg, https://media.rawg.io/media/games/d58/d588947d4286e7b5e0e12e1bea7d9844.jpg, https://media.rawg.io/media/games/6cd/6cd653e0aaef5ff8bbd295bf4bcb12eb.jpg, https://media.rawg.io/media/games/ec3/ec3a7db7b8ab5a71aad622fe7c62632f.jpg, https://media.rawg.io/media/games/490/49016e06ae2103881ff6373248843069.jpg, https://media.rawg.io/media/games/4be/4be6a6ad0364751a96229c56bf69be59.jpg, https://media.rawg.io/media/games/8cc/8cce7c0e99dcc43d66c8efd42f9d03e3.jpg, https://media.rawg.io/media/games/d82/d82990b9c67ba0d2d09d4e6fa88885a7.jpg, https://media.rawg.io/media/games/2ba/2bac0e87cf45e5b508f227d281c9252a.jpg, https://media.rawg.io/media/games/d82/d82990b9c67ba0d2d09d4e6fa88885a7.jpg, https://media.rawg.io/media/games/511/5118aff5091cb3efec399c808f8c598f.jpg, https://media.rawg.io/media/games/26d/26d4437715bee60138dab4a7c8c59c92.jpg, https://media.rawg.io/media/games/f87/f87457e8347484033cb34cde6101d08d.jpg, https://media.rawg.io/media/games/1bd/1bd2657b81eb0c99338120ad444b24ff.jpg, https://media.rawg.io/media/games/511/5118aff5091cb3efec399c808f8c598f.jpg, https://media.rawg.io/media/games/aa3/aa36ba4b486a03ddfaef274fb4f5afd4.jpg, https://media.rawg.io/media/games/5be/5bec14622f6faf804a592176577c1347.jpg, https://media.rawg.io/media/games/4be/4be6a6ad0364751a96229c56bf69be59.jpg, https://media.rawg.io/media/games/5a4/5a44112251d70a25291cc33757220fce.jpg, https://media.rawg.io/media/games/511/5118aff5091cb3efec399c808f8c598f.jpg, https://media.rawg.io/media/games/48e/48e63bbddeddbe9ba81942772b156664.jpg, https://media.rawg.io/media/games/686/686909717c3aa01518bc42ae2bf4259e.jpg, https://media.rawg.io/media/games/9af/9af24c1886e2c7b52a4a2c65aa874638.jpg, https://media.rawg.io/media/games/009/009e4e84975d6a60173ec1199db25aa3.jpg, https://media.rawg.io/media/games/410/41033a495ce8f7fd4b0934bdb975f12a.jpg, https://media.rawg.io/media/games/447/4470c1e76f01acfaf5af9c207d1c1c92.jpg, https://media.rawg.io/media/games/2fe/2feec1ba840f467a2280061b9e665c6e.jpg, https://media.rawg.io/media/games/fee/fee0100afd87b52bfbd33e26689fa26c.jpg, https://media.rawg.io/media/games/3ea/3ea3c9bbd940b6cb7f2139e42d3d443f.jpg, https://media.rawg.io/media/games/8ca/8ca40b562a755d6a0e30d48e6c74b178.jpg, https://media.rawg.io/media/games/471/4712c9ac591f556f553556b864a7e92b.jpg, https://media.rawg.io/media/games/569/569ea25d2b56bd05c7fa309ddabe81ff.jpg, https://media.rawg.io/media/games/106/1069e754e7e6012b0cf42b4b04704792.jpg, https://media.rawg.io/media/games/8e4/8e4de3f54ac659e08a7ba6a2b731682a.jpg, https://media.rawg.io/media/games/106/1069e754e7e6012b0cf42b4b04704792.jpg, https://media.rawg.io/media/games/742/7424c1f7d0a8da9ae29cd866f985698b.jpg, https://media.rawg.io/media/games/943/9432de383089b0a427a3cdf3687b2b73.jpg, https://media.rawg.io/media/games/5dd/5dd4d2dd986d2826800bc37fff64aa4f.jpg, https://media.rawg.io/media/screenshots/65c/65c8b501f8c2a9c9386411d7b5210934.jpg, https://media.rawg.io/media/screenshots/e03/e035196b873383c7cb7d868f2a73a24c.jpg, https://media.rawg.io/media/games/578/578dc93c4b968ae544f0e9af5017bc91.jpg, https://media.rawg.io/media/games/361/361521dd66118f68e642aa095e3493c1.jpg, https://media.rawg.io/media/screenshots/8f7/8f71e26d9cb5cccdf6324c3037def4f0.jpg, https://media.rawg.io/media/games/fbd/fbdef5455da4c4033bed896e1540f6a1.jpg, https://media.rawg.io/media/screenshots/50c/50ca35b80bd7a35a1a7d9fecdbcd6517_kJS1cIB.jpg, https://media.rawg.io/media/games/9cc/9ccb59a7c634091bc8a9b7978d4dc322.jpg, https://media.rawg.io/media/games/1a1/1a12d14fdf05fa7a62aa8e65e02b984e.jpeg, https://media.rawg.io/media/games/c14/c148c1e52dac195fd28158834360fb97.jpg, https://media.rawg.io/media/games/370/370a27962e860e9b01709ef3de60fffe.jpg, https://media.rawg.io/media/games/bc2/bc25f96263d3f206369fd16415688a53.jpg, https://media.rawg.io/media/games/b33/b332fc26d8104f5a43987dba7105ba1f.jpg, https://media.rawg.io/media/games/021/021d48108ec99947d8f09dc6abe3f980.jpg, https://media.rawg.io/media/screenshots/545/545c99afe5196ff73331db34c11bf63d.jpg
+4                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        31, 42396, 42417, 42392, 40847, 7, 40836, 40849, 13, 42425, 42400, 7808, 42401, 42, 18, 411, 42428, 42429, 8, 42423, 32, 16, 30, 42427, 9, 40850, 42452, 1, 42433, 42416, 42436, 115, 80, 63, 42453, 70, 42430, 167, 11, 42450, 42451, 40856, 406, 808, 974, Singleplayer, Для одного игрока, Экшен, Приключение, Steam Achievements, Multiplayer, Full controller support, Steam Cloud, Atmospheric, Для нескольких игроков, Атмосфера, steam-trading-cards, Отличный саундтрек, Great Soundtrack, Co-op, cooperative, Шутер, От первого лица, First-Person, Научная фантастика, Sci-fi, Horror, FPS, Шутер от первого лица, Online Co-Op, Steam Leaderboards, Выживание, Survival, Совместная игра по сети, Контроллер, Тактика, Controller, Tactical, Zombies, ММО, War, Война, Futuristic, Team-Based, Командная, Будущее, Valve Anti-Cheat enabled, Story, character, death, singleplayer, dlia-odnogo-igroka, ekshen, prikliuchenie, steam-achievements, multiplayer, full-controller-support, steam-cloud, atmospheric, dlia-neskolkikh-igrokov, atmosfera, steam-trading-cards, otlichnyi-saundtrek, great-soundtrack, co-op, cooperative, shuter, ot-pervogo-litsa, first-person, nauchnaia-fantastika, sci-fi, horror, fps, shuter-ot-pervogo-litsa, online-co-op, steam-leaderboards, vyzhivanie, survival, sovmestnaia-igra-po-seti, kontroller, taktika, controller, tactical, zombies, mmo-2, war, voina, futuristic, team-based, komandnaia, budushchee, valve-anti-cheat-enabled, story, character, death, eng, rus, rus, rus, eng, eng, eng, eng, eng, rus, rus, eng, rus, eng, eng, eng, rus, rus, eng, rus, eng, eng, eng, rus, eng, eng, rus, eng, rus, rus, rus, eng, eng, eng, rus, eng, rus, eng, eng, rus, rus, eng, eng, eng, eng, 250935, 70781, 50602, 49201, 51769, 42579, 24170, 25770, 39736, 12951, 6083, 7568, 4675, 3450, 14408, 6595, 11974, 16492, 37416, 10967, 22074, 49188, 14994, 6975, 7693, 8472, 8291, 10846, 1226, 9492, 5249, 15050, 6625, 11215, 2873, 10103, 3190, 6927, 2076, 1776, 5062, 105, 11557, 8889, 3810, https://media.rawg.io/media/games/960/960b601d9541cec776c5fa42a00bf6c4.jpg, https://media.rawg.io/media/games/49c/49c3dfa4ce2f6f140cc4825868e858cb.jpg, https://media.rawg.io/media/games/587/587588c64afbff80e6f444eb2e46f9da.jpg, https://media.rawg.io/media/games/26d/26d4437715bee60138dab4a7c8c59c92.jpg, https://media.rawg.io/media/games/713/713269608dc8f2f40f5a670a14b2de94.jpg, https://media.rawg.io/media/games/157/15742f2f67eacff546738e1ab5c19d20.jpg, https://media.rawg.io/media/games/4cf/4cfc6b7f1850590a4634b08bfab308ab.jpg, https://media.rawg.io/media/games/120/1201a40e4364557b124392ee50317b99.jpg, https://media.rawg.io/media/games/7cf/7cfc9220b401b7a300e409e539c9afd5.jpg, https://media.rawg.io/media/games/736/73619bd336c894d6941d926bfd563946.jpg, https://media.rawg.io/media/games/d1a/d1a2e99ade53494c6330a0ed945fe823.jpg, https://media.rawg.io/media/games/48c/48cb04ca483be865e3a83119c94e6097.jpg, https://media.rawg.io/media/games/b8c/b8c243eaa0fbac8115e0cdccac3f91dc.jpg, https://media.rawg.io/media/games/8a0/8a02f84a5916ede2f923b88d5f8217ba.jpg, https://media.rawg.io/media/games/1bd/1bd2657b81eb0c99338120ad444b24ff.jpg, https://media.rawg.io/media/games/dd5/dd50d4266915d56dd5b63ae1bf72606a.jpg, https://media.rawg.io/media/games/021/021c4e21a1824d2526f925eff6324653.jpg, https://media.rawg.io/media/games/bc0/bc06a29ceac58652b684deefe7d56099.jpg, https://media.rawg.io/media/games/157/15742f2f67eacff546738e1ab5c19d20.jpg, https://media.rawg.io/media/games/9dd/9ddabb34840ea9227556670606cf8ea3.jpg, https://media.rawg.io/media/games/e6d/e6de699bd788497f4b52e2f41f9698f2.jpg, https://media.rawg.io/media/games/ebd/ebdbb7eb52bd58b0e7fa4538d9757b60.jpg, https://media.rawg.io/media/games/26d/26d4437715bee60138dab4a7c8c59c92.jpg, https://media.rawg.io/media/games/6c5/6c55e22185876626881b76c11922b073.jpg, https://media.rawg.io/media/games/d69/d69810315bd7e226ea2d21f9156af629.jpg, https://media.rawg.io/media/games/f99/f9979698c43fd84c3ab69280576dd3af.jpg, https://media.rawg.io/media/games/48e/48e63bbddeddbe9ba81942772b156664.jpg, https://media.rawg.io/media/games/b6b/b6b20bfc4b34e312dbc8aac53c95a348.jpg, https://media.rawg.io/media/games/73e/73eecb8909e0c39fb246f457b5d6cbbe.jpg, https://media.rawg.io/media/games/fc3/fc30790a3b3c738d7a271b02c1e26dc2.jpg, https://media.rawg.io/media/games/476/476178ef18ab0534771d099f51cdc694.jpg, https://media.rawg.io/media/games/b6b/b6b20bfc4b34e312dbc8aac53c95a348.jpg, https://media.rawg.io/media/games/1a1/1a17e9b6286edb7e1f1e510110ccb0c0.jpg, https://media.rawg.io/media/games/1e5/1e5e33b88be978f451196a751424a72e.jpg, https://media.rawg.io/media/screenshots/2b9/2b9a49e89c1ba892a648620194dcf327.jpg, https://media.rawg.io/media/games/736/73619bd336c894d6941d926bfd563946.jpg, https://media.rawg.io/media/games/45b/45b57ed59de4b84effd8f6bc4b7bf515.jpg, https://media.rawg.io/media/games/34b/34b1f1850a1c06fd971bc6ab3ac0ce0e.jpg, https://media.rawg.io/media/games/736/73619bd336c894d6941d926bfd563946.jpg, https://media.rawg.io/media/games/d58/d588947d4286e7b5e0e12e1bea7d9844.jpg, https://media.rawg.io/media/games/396/3963e0df75c22d5995368ec43dacc19e.jpg, https://media.rawg.io/media/games/78d/78dfae12fb8c5b16cd78648553071e0a.jpg, https://media.rawg.io/media/games/74b/74b239f6ef0216a2f66e652d54abb2e6.jpg, https://media.rawg.io/media/screenshots/e0a/e0abaefbcc99ef995be57d857806f2d2.jpeg, https://media.rawg.io/media/screenshots/113/113726764cc02f8c9fa38a0029cedc84.jpg
+5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            31, 42396, 42417, 40847, 7, 40836, 13, 42425, 42400, 42401, 42, 42394, 18, 118, 42442, 36, 411, 42428, 42429, 8, 42423, 32, 30, 42427, 42413, 42491, 26, 40850, 40852, 63, 42544, 167, 42643, 42451, 188, 40856, 197, 42630, 981, 178, 269, 42448, Singleplayer, Для одного игрока, Экшен, Steam Achievements, Multiplayer, Full controller support, Atmospheric, Для нескольких игроков, Атмосфера, Отличный саундтрек, Great Soundtrack, Глубокий сюжет, Co-op, Story Rich, Открытый мир, Open World, cooperative, Шутер, От первого лица, First-Person, Научная фантастика, Sci-fi, FPS, Шутер от первого лица, Симулятор, Мясо, Gore, Steam Leaderboards, Steam Workshop, Zombies, Зомби, Futuristic, Паркур, Будущее, Parkour, Valve Anti-Cheat enabled, Robots, Роботы, battle, Illuminati, Quick-Time Events, Иллюминаты, singleplayer, dlia-odnogo-igroka, ekshen, steam-achievements, multiplayer, full-controller-support, atmospheric, dlia-neskolkikh-igrokov, atmosfera, otlichnyi-saundtrek, great-soundtrack, glubokii-siuzhet, co-op, story-rich, otkrytyi-mir, open-world, cooperative, shuter, ot-pervogo-litsa, first-person, nauchnaia-fantastika, sci-fi, fps, shuter-ot-pervogo-litsa, simuliator, miaso, gore, steam-leaderboards, steam-workshop, zombies, zombi-2, futuristic, parkur-2, budushchee, parkour, valve-anti-cheat-enabled, robots, roboty, battle, illuminati, quick-time-events, illiuminaty, eng, rus, rus, eng, eng, eng, eng, rus, rus, rus, eng, rus, eng, eng, rus, eng, eng, rus, rus, eng, rus, eng, eng, rus, rus, rus, eng, eng, eng, eng, rus, eng, rus, rus, eng, eng, eng, rus, eng, eng, eng, rus, 251028, 70855, 50629, 51821, 42592, 24189, 39760, 12960, 6083, 4675, 3450, 18148, 14415, 27291, 7466, 9280, 6600, 11981, 16517, 37441, 10975, 22082, 15001, 6982, 26191, 4962, 6681, 8478, 1772, 11216, 3567, 6931, 1788, 5066, 4110, 105, 8879, 2470, 10707, 378, 935, 322, https://media.rawg.io/media/games/d58/d588947d4286e7b5e0e12e1bea7d9844.jpg, https://media.rawg.io/media/games/021/021c4e21a1824d2526f925eff6324653.jpg, https://media.rawg.io/media/games/587/587588c64afbff80e6f444eb2e46f9da.jpg, https://media.rawg.io/media/games/f46/f466571d536f2e3ea9e815ad17177501.jpg, https://media.rawg.io/media/games/490/49016e06ae2103881ff6373248843069.jpg, https://media.rawg.io/media/games/73e/73eecb8909e0c39fb246f457b5d6cbbe.jpg, https://media.rawg.io/media/games/fc1/fc1307a2774506b5bd65d7e8424664a7.jpg, https://media.rawg.io/media/games/b8c/b8c243eaa0fbac8115e0cdccac3f91dc.jpg, https://media.rawg.io/media/games/d1a/d1a2e99ade53494c6330a0ed945fe823.jpg, https://media.rawg.io/media/games/20a/20aa03a10cda45239fe22d035c0ebe64.jpg, https://media.rawg.io/media/games/120/1201a40e4364557b124392ee50317b99.jpg, https://media.rawg.io/media/games/490/49016e06ae2103881ff6373248843069.jpg, https://media.rawg.io/media/games/736/73619bd336c894d6941d926bfd563946.jpg, https://media.rawg.io/media/games/2ba/2bac0e87cf45e5b508f227d281c9252a.jpg, https://media.rawg.io/media/games/ee3/ee3e10193aafc3230ba1cae426967d10.jpg, https://media.rawg.io/media/games/34b/34b1f1850a1c06fd971bc6ab3ac0ce0e.jpg, https://media.rawg.io/media/games/dd5/dd50d4266915d56dd5b63ae1bf72606a.jpg, https://media.rawg.io/media/games/511/5118aff5091cb3efec399c808f8c598f.jpg, https://media.rawg.io/media/games/511/5118aff5091cb3efec399c808f8c598f.jpg, https://media.rawg.io/media/games/1bd/1bd2657b81eb0c99338120ad444b24ff.jpg, https://media.rawg.io/media/games/174/174fabfca02d5730531bab2153a7dfcb.jpg, https://media.rawg.io/media/games/2ba/2bac0e87cf45e5b508f227d281c9252a.jpg, https://media.rawg.io/media/games/c80/c80bcf321da44d69b18a06c04d942662.jpg, https://media.rawg.io/media/games/b8c/b8c243eaa0fbac8115e0cdccac3f91dc.jpg, https://media.rawg.io/media/games/27b/27b02ffaab6b250cc31bf43baca1fc34.jpg, https://media.rawg.io/media/games/8d6/8d69eb6c32ed6acfd75f82d532144993.jpg, https://media.rawg.io/media/games/3ea/3ea3c9bbd940b6cb7f2139e42d3d443f.jpg, https://media.rawg.io/media/games/c80/c80bcf321da44d69b18a06c04d942662.jpg, https://media.rawg.io/media/games/149/149bbed9d90dc09328ba79bbacfda3c8.jpg, https://media.rawg.io/media/games/686/686909717c3aa01518bc42ae2bf4259e.jpg, https://media.rawg.io/media/games/7a2/7a2500ee8b2c0e1ff268bb4479463dea.jpg, https://media.rawg.io/media/games/b7d/b7d3f1715fa8381a4e780173a197a615.jpg, https://media.rawg.io/media/games/59f/59fc1c5de1d29cb9234741c97d250150.jpg, https://media.rawg.io/media/games/08b/08b2eee52a9876a48b955e5149affe5b.jpg, https://media.rawg.io/media/games/9dd/9ddabb34840ea9227556670606cf8ea3.jpg, https://media.rawg.io/media/games/78d/78dfae12fb8c5b16cd78648553071e0a.jpg, https://media.rawg.io/media/games/bf7/bf73b105ccbba42107986bbcd96fcada.jpg, https://media.rawg.io/media/games/149/149bbed9d90dc09328ba79bbacfda3c8.jpg, https://media.rawg.io/media/games/6b1/6b14dc4cc1785e396580c69165e55d2d.jpg, https://media.rawg.io/media/games/214/2140885d34e3a3398b45036e5d870971.jpg, https://media.rawg.io/media/games/736/736c0eaec96d848d7824b33298a182f2.jpg, https://media.rawg.io/media/games/123/123e035701a975f5d96c233f4048eed2.jpg
+6                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     31, 42396, 42417, 40847, 7, 40836, 42425, 18, 411, 42428, 42429, 8, 30, 42427, 9, 42491, 26, 42402, 34, 42436, 80, 157, 40832, 63, 42434, 42544, 70, 40837, 42431, 81, 45878, 413, 171, 981, 70351, 4565, 3109, 42668, 251, 42652, 274, 87088, Singleplayer, Для одного игрока, Экшен, Steam Achievements, Multiplayer, Full controller support, Для нескольких игроков, Co-op, cooperative, Шутер, От первого лица, First-Person, FPS, Шутер от первого лица, Online Co-Op, Мясо, Gore, Насилие, Violent, Тактика, Tactical, PvP, Cross-Platform Multiplayer, Zombies, Игрок против игрока, Зомби, War, In-App Purchases, Военные действия, Military, Online PvP, online, PvE, battle, Сетевой кооператив, offline, weapons, Холодная война, Cold War, Кастомизация оружия, Gun Customization, Игрок против ИИ, singleplayer, dlia-odnogo-igroka, ekshen, steam-achievements, multiplayer, full-controller-support, dlia-neskolkikh-igrokov, co-op, cooperative, shuter, ot-pervogo-litsa, first-person, fps, shuter-ot-pervogo-litsa, online-co-op, miaso, gore, nasilie, violent, taktika, tactical, pvp, cross-platform-multiplayer, zombies, igrok-protiv-igroka, zombi-2, war, in-app-purchases, voennye-deistviia, military, online-pvp, online, pve, battle, setevoi-kooperativ, offline, weapons, kholodnaia-voina, cold-war, kastomizatsiia-oruzhiia, gun-customization, igrok-protiv-ii, eng, rus, rus, eng, eng, eng, rus, eng, eng, rus, rus, eng, eng, rus, eng, rus, eng, rus, eng, rus, eng, eng, eng, eng, rus, rus, eng, eng, rus, eng, eng, eng, eng, eng, rus, eng, eng, rus, eng, rus, eng, rus, 251028, 70855, 50629, 51821, 42592, 24189, 12960, 14415, 6600, 11981, 16517, 37441, 15001, 6982, 7700, 4962, 6681, 6823, 7861, 5254, 6630, 12078, 3167, 11216, 7236, 3567, 10104, 3427, 2513, 2529, 6430, 6552, 8009, 10707, 3007, 1073, 2314, 341, 313, 858, 842, 5494, https://media.rawg.io/media/games/d58/d588947d4286e7b5e0e12e1bea7d9844.jpg, https://media.rawg.io/media/games/021/021c4e21a1824d2526f925eff6324653.jpg, https://media.rawg.io/media/games/587/587588c64afbff80e6f444eb2e46f9da.jpg, https://media.rawg.io/media/games/f46/f466571d536f2e3ea9e815ad17177501.jpg, https://media.rawg.io/media/games/490/49016e06ae2103881ff6373248843069.jpg, https://media.rawg.io/media/games/73e/73eecb8909e0c39fb246f457b5d6cbbe.jpg, https://media.rawg.io/media/games/b8c/b8c243eaa0fbac8115e0cdccac3f91dc.jpg, https://media.rawg.io/media/games/736/73619bd336c894d6941d926bfd563946.jpg, https://media.rawg.io/media/games/dd5/dd50d4266915d56dd5b63ae1bf72606a.jpg, https://media.rawg.io/media/games/511/5118aff5091cb3efec399c808f8c598f.jpg, https://media.rawg.io/media/games/511/5118aff5091cb3efec399c808f8c598f.jpg, https://media.rawg.io/media/games/1bd/1bd2657b81eb0c99338120ad444b24ff.jpg, https://media.rawg.io/media/games/c80/c80bcf321da44d69b18a06c04d942662.jpg, https://media.rawg.io/media/games/b8c/b8c243eaa0fbac8115e0cdccac3f91dc.jpg, https://media.rawg.io/media/games/530/5302dd22a190e664531236ca724e8726.jpg, https://media.rawg.io/media/games/8d6/8d69eb6c32ed6acfd75f82d532144993.jpg, https://media.rawg.io/media/games/3ea/3ea3c9bbd940b6cb7f2139e42d3d443f.jpg, https://media.rawg.io/media/games/744/744adc36e6573dd67a0cb0e373738d19.jpg, https://media.rawg.io/media/games/951/951572a3dd1e42544bd39a5d5b42d234.jpg, https://media.rawg.io/media/screenshots/ad4/ad445a12ee46543d4d117f3893041ebf.jpg, https://media.rawg.io/media/games/d58/d588947d4286e7b5e0e12e1bea7d9844.jpg, https://media.rawg.io/media/games/095/0953bf01cd4e4dd204aba85489ac9868.jpg, https://media.rawg.io/media/games/8cc/8cce7c0e99dcc43d66c8efd42f9d03e3.jpg, https://media.rawg.io/media/games/686/686909717c3aa01518bc42ae2bf4259e.jpg, https://media.rawg.io/media/games/9af/9af24c1886e2c7b52a4a2c65aa874638.jpg, https://media.rawg.io/media/games/7a2/7a2500ee8b2c0e1ff268bb4479463dea.jpg, https://media.rawg.io/media/games/8ee/8eed88e297441ef9202b5d1d35d7d86f.jpg, https://media.rawg.io/media/screenshots/2b9/2b9a49e89c1ba892a648620194dcf327.jpg, https://media.rawg.io/media/games/e8f/e8f923180ecb9614ec564a15937cfd9e.jpg, https://media.rawg.io/media/games/ccc/ccc0d5396e3331d58e5eb58a6a1fa1b7.jpg, https://media.rawg.io/media/games/9c7/9c7dd09596246993169b356d7c1facf0.jpg, https://media.rawg.io/media/games/d51/d51ada3b94bfd617bf91d4344ab81ce9.jpg, https://media.rawg.io/media/games/4be/4be6a6ad0364751a96229c56bf69be59.jpg, https://media.rawg.io/media/games/6b1/6b14dc4cc1785e396580c69165e55d2d.jpg, https://media.rawg.io/media/games/fa8/fa870a46d5e3e8cb1fa0a5e4f798ff2a.jpg, https://media.rawg.io/media/games/075/0753492cda7ee3c9bd4a3ca673fd0c8c.jpg, https://media.rawg.io/media/games/34b/34b1f1850a1c06fd971bc6ab3ac0ce0e.jpg, https://media.rawg.io/media/games/6af/6afa633097ba04b5985680309d41120d.jpg, https://media.rawg.io/media/games/d1e/d1e70ce3762efcfc170c6bd067d7e9e3.jpg, https://media.rawg.io/media/games/a9a/a9ab53644b92698b18957a362c99b4e2.jpg, https://media.rawg.io/media/games/d1d/d1d60b2fce4d651bab8fc108432b5ec0.jpg, https://media.rawg.io/media/games/a9a/a9ab53644b92698b18957a362c99b4e2.jpg
+  esrb_rating.id esrb_rating.name esrb_rating.slug esrb_rating.name_en
+1              4           Mature           mature              Mature
+2             NA             &lt;NA&gt;             &lt;NA&gt;                &lt;NA&gt;
+3              5      Adults Only      adults-only         Adults Only
+4              4           Mature           mature              Mature
+5              4           Mature           mature              Mature
+6             NA             &lt;NA&gt;             &lt;NA&gt;                &lt;NA&gt;
+  esrb_rating.name_ru user_game reviews_count saturated_color dominant_color
+1            С 17 лет        NA          1891          0f0f0f         0f0f0f
+2                &lt;NA&gt;        NA           114          0f0f0f         0f0f0f
+3 Только для взрослых        NA            19          0f0f0f         0f0f0f
+4            С 17 лет        NA          1447          0f0f0f         0f0f0f
+5            С 17 лет        NA          1517          0f0f0f         0f0f0f
+6                &lt;NA&gt;        NA           392          0f0f0f         0f0f0f
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 short_screenshots
+1                   -1, 7623, 7635, 7644, 7646, 7647, 7668, https://media.rawg.io/media/games/410/41033a495ce8f7fd4b0934bdb975f12a.jpg, https://media.rawg.io/media/screenshots/a02/a027c280854d5e2f5356f87665dd524a.jpg, https://media.rawg.io/media/screenshots/6fb/6fba712fa9ca9ffada775b77e4dcff74.jpg, https://media.rawg.io/media/screenshots/e8d/e8dfc3e3614f83b968898eb2adbd5e64.jpg, https://media.rawg.io/media/screenshots/7be/7be0d2082caa1eebf28a901f0ccb3561.jpg, https://media.rawg.io/media/screenshots/892/89281338b206f0d06bae96beb00aa9dd.jpg, https://media.rawg.io/media/screenshots/9e7/9e7aa6f83ffdfc7ec57f78d1dcdaf0fa.jpg
+2 -1, 4052559, 4055128, 4055133, 4055139, 4055167, 4055168, https://media.rawg.io/media/games/e89/e89f9a409bce5d36873f65ea9659c36e.jpg, https://media.rawg.io/media/screenshots/a34/a34cddc45e00e0f848df621c7357e5db.jpg, https://media.rawg.io/media/screenshots/994/994ac82a6dc28e2abf5e1f06fa49b7fe.jpg, https://media.rawg.io/media/screenshots/735/735c25b748097c3454e9cd87f8d1a0e2.jpg, https://media.rawg.io/media/screenshots/546/546de96bebda6cb7f73fa018f18556e9.jpg, https://media.rawg.io/media/screenshots/707/70778379dfaf16c64996827ad67940f8.jpg, https://media.rawg.io/media/screenshots/cfc/cfc9e6d7fd59b628626839460e1329a0.jpg
+3                                                                                                                                                                                      -1, 4239223, 4246841, 4246842, 4246843, https://media.rawg.io/media/games/4ca/4cabe38446288beb37fc73b2fe047b08.jpg, https://media.rawg.io/media/screenshots/2f2/2f2be7c95febbb9bef5a66f88baa3e65.jpeg, https://media.rawg.io/media/screenshots/275/275d75a25927b328730e31cb53b1314a.jpg, https://media.rawg.io/media/screenshots/91c/91c7e10c38c9ed10ea22abaa4756054c.jpg, https://media.rawg.io/media/screenshots/dc9/dc9d9b70b6045dee7015114d9972c200.jpg
+4       -1, 126049, 126050, 126051, 126052, 126053, 126054, https://media.rawg.io/media/games/8ee/8eed88e297441ef9202b5d1d35d7d86f.jpg, https://media.rawg.io/media/screenshots/c5c/c5c52956aaa535f92067f8dbb94ed792.jpg, https://media.rawg.io/media/screenshots/898/898c3ea7d05d437208adf5c7098b87d4.jpg, https://media.rawg.io/media/screenshots/490/490cd725bd80c0bc2359a0405ee21213.jpg, https://media.rawg.io/media/screenshots/fd0/fd0fe49f4a55f6f1af36aaacf0d92051.jpg, https://media.rawg.io/media/screenshots/b75/b7525f0077cf7d7ec6c055f2b51614ef.jpg, https://media.rawg.io/media/screenshots/8f7/8f75918847ba00b554ed6ba2e9cef848.jpg
+5                  -1, 7974, 7979, 7989, 7995, 8001, 97810, https://media.rawg.io/media/games/fd6/fd6a1eecd3ec0f875f1924f3656b7dd9.jpg, https://media.rawg.io/media/screenshots/320/32019fd3760123a5ded9937f43ad0318.jpg, https://media.rawg.io/media/screenshots/000/000880b0f1eeabbdf8a86779f75f25ac.jpg, https://media.rawg.io/media/screenshots/bc1/bc1ab01319be2e0b7f7ba3dff80fe780.jpg, https://media.rawg.io/media/screenshots/80f/80f79bf7e27e69824dc1a7e04bc8e766.jpg, https://media.rawg.io/media/screenshots/ca8/ca89a641e6362e800d96da99b8ac93e0.jpg, https://media.rawg.io/media/screenshots/aa0/aa08b684dca3f104305c92002b9ce5da.jpg
+6 -1, 2498813, 2498814, 2498815, 2492395, 2492396, 2492397, https://media.rawg.io/media/games/6b1/6b14dc4cc1785e396580c69165e55d2d.jpg, https://media.rawg.io/media/screenshots/937/937d0162549b56e2e8516495014cdff6.jpg, https://media.rawg.io/media/screenshots/569/569d36684151bda3840db81ecabdaffb.jpg, https://media.rawg.io/media/screenshots/fff/fffff525947dc0a6e2f46eb54cb89e73.jpg, https://media.rawg.io/media/screenshots/21c/21ceeef3724285298cad89d0f4a7b3e2.jpg, https://media.rawg.io/media/screenshots/c9d/c9d4eaea4140e49a3e65c189bd72cefd.jpg, https://media.rawg.io/media/screenshots/546/5461854d824b4587e90ac5f96b7af45f.jpg
+                                                                                                    parent_platforms
+1 1, 2, 3, 4, 5, 7, PC, PlayStation, Xbox, iOS, Apple Macintosh, Nintendo, pc, playstation, xbox, ios, mac, nintendo
+2                                                              1, 2, 3, PC, PlayStation, Xbox, pc, playstation, xbox
+3                                                              1, 2, 3, PC, PlayStation, Xbox, pc, playstation, xbox
+4                                       1, 2, 3, 7, PC, PlayStation, Xbox, Nintendo, pc, playstation, xbox, nintendo
+5                                                              1, 2, 3, PC, PlayStation, Xbox, pc, playstation, xbox
+6                                                              1, 2, 3, PC, PlayStation, Xbox, pc, playstation, xbox
+                                  genres community_rating
+1 2, 4, Shooter, Action, shooter, action               NA
+2 2, 4, Shooter, Action, shooter, action               NA
+3 2, 4, Shooter, Action, shooter, action               NA
+4 2, 4, Shooter, Action, shooter, action               NA
+5 2, 4, Shooter, Action, shooter, action               NA
+6 2, 4, Shooter, Action, shooter, action               NA</code></pre>
+</div>
+</div>
+<p>I wanted to look at how this game shows up in our combined data.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>combined_data <span class="ot">&lt;-</span> combined_wii</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>cod_sales <span class="ot">&lt;-</span> combined_data <span class="sc">%&gt;%</span> </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(Name, <span class="st">"Call of Duty"</span>))</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cod_sales)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 16
+   Rank Name           Platform Year  Genre Publisher NA_Sales EU_Sales JP_Sales
+  &lt;dbl&gt; &lt;chr&gt;          &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;        &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+1    30 Call of Duty:… X360     2011  Shoo… Activisi…     9.03     4.28     0.13
+2    32 Call of Duty:… X360     2010  Shoo… Activisi…     9.67     3.73     0.11
+3    34 Call of Duty:… PS4      2015  Shoo… Activisi…     5.77     5.81     0.35
+4    35 Call of Duty:… PS3      2012  Shoo… Activisi…     4.99     5.88     0.65
+5    36 Call of Duty:… X360     2012  Shoo… Activisi…     8.25     4.3      0.07
+6    37 Call of Duty:… X360     2009  Shoo… Activisi…     8.52     3.63     0.08
+# ℹ 7 more variables: Other_Sales &lt;dbl&gt;, Global_Sales &lt;dbl&gt;, rating &lt;dbl&gt;,
+#   rating_top &lt;int&gt;, metacritic &lt;int&gt;, score &lt;chr&gt;, ratings_count &lt;int&gt;</code></pre>
+</div>
+</div>
+<p>We can combine these like we did before with the Wii sports games.<br>
+This time the columns are already created so we have to also coalesce the data frames.<br>
+I will update the function I made to do this.<br>
+If we were doing it one by one we could combine it all in one step but I wanted a way that made the data frame step by step.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Update the function to handle the columns already being present.</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>combine_data <span class="ot">&lt;-</span> <span class="cf">function</span>(df, df_reviews){</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Select columns from reviews that we want to add.</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(df_reviews)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  df_reviews <span class="ot">&lt;-</span> df_reviews <span class="sc">%&gt;%</span> <span class="fu">select</span>( <span class="co"># Select different rating to use, `rating` seems to be the main one.</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Name =</span> name,</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    rating, </span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    rating_top,</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    metacritic,</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    score,</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    ratings_count</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  combined <span class="ot">&lt;-</span> <span class="fu">left_join</span>(df, df_reviews, <span class="at">by =</span> <span class="st">"Name"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">rating =</span> <span class="fu">coalesce</span>(rating.x, rating.y), <span class="co"># Because the dataframe already has these columns we can coalesce. This will take the non na value.</span></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">rating_top =</span> <span class="fu">coalesce</span>(rating_top.x, rating_top.y),</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">metacritic =</span> <span class="fu">coalesce</span>(metacritic.x, metacritic.y),</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">score =</span> <span class="fu">coalesce</span>(score.x, score.y),</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">ratings_count =</span> <span class="fu">coalesce</span>(ratings_count.x, ratings_count.y)</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">ends_with</span>(<span class="st">".x"</span>), <span class="sc">-</span><span class="fu">ends_with</span>(<span class="st">".y"</span>)) <span class="co"># Remove the .x and .y columns. These are the duplicates from the original left_join </span></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(combined)</span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>combined_data <span class="ot">&lt;-</span> <span class="fu">combine_data</span>(combined_data, cod_response_df)</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>(combined_data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(rating) <span class="sc">&amp;</span>  (<span class="fu">str_detect</span>(Name, <span class="st">"Call of Duty"</span>))))  <span class="co"># Show the cod games that were filled</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 16
+   Rank Name           Platform Year  Genre Publisher NA_Sales EU_Sales JP_Sales
+  &lt;dbl&gt; &lt;chr&gt;          &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;        &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+1    32 Call of Duty:… X360     2010  Shoo… Activisi…     9.67     3.73     0.11
+2    35 Call of Duty:… PS3      2012  Shoo… Activisi…     4.99     5.88     0.65
+3    36 Call of Duty:… X360     2012  Shoo… Activisi…     8.25     4.3      0.07
+4    41 Call of Duty:… PS3      2010  Shoo… Activisi…     5.98     4.44     0.48
+5  1128 Call of Duty:… PC       N/A   Shoo… Activisi…     0.58     0.81     0   
+6  1219 Call of Duty:… PC       2012  Shoo… Activisi…     0.63     0.69     0   
+7  1381 Call of Duty:… Wii      2010  Shoo… Activisi…     0.82     0.47     0   
+8  3213 Call of Duty:… DS       2010  Shoo… Activisi…     0.54     0.05     0   
+9  4556 Call of Duty:… WiiU     2012  Shoo… Activisi…     0.21     0.18     0   
+# ℹ 7 more variables: Other_Sales &lt;dbl&gt;, Global_Sales &lt;dbl&gt;, rating &lt;dbl&gt;,
+#   rating_top &lt;int&gt;, metacritic &lt;int&gt;, score &lt;chr&gt;, ratings_count &lt;int&gt;</code></pre>
+</div>
+</div>
+<p>While looking at the data I notice that not all of the Call of Duty games from the reviews have matches to our sales data.<br>
+It is entirely possible that these data sets do not have complete overlap. I will leave these values as NA. If we have enough data I will leave it like this.<br>
+</p>
+<p>Now I want to iterate through the data frame based on null ratings.<br>
+I used the latest free version of chat gpt to help generate this code.<br>
+This code keeps track of the already tried rows</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>attempted_ids <span class="ot">&lt;-</span> <span class="fu">character</span>() <span class="co"># Keep track of attempted names</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Now perform the api calls, cache = true keeps the results in memory for the knit.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>remaining_ids <span class="ot">&lt;-</span> combined_data <span class="sc">%&gt;%</span> <span class="co"># Get the names that still need to be tried</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">is.na</span>(rating)) <span class="sc">%&gt;%</span> <span class="co"># Rows that have no rating</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(Name) <span class="co"># No need to run the same game twice(its separated by Platform)</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span>(<span class="fu">nrow</span>(remaining_ids) <span class="sc">&gt;</span> <span class="dv">0</span>) { <span class="co"># while we have remaining ids</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  id <span class="ot">&lt;-</span> remaining_ids<span class="sc">$</span>Name[<span class="dv">1</span>] <span class="co"># Get the name as id</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mark as attempted BEFORE api call</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  attempted_ids <span class="ot">&lt;-</span> <span class="fu">c</span>(attempted_ids, id) <span class="co"># Update attempted_ids with the extra name</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>  api_result <span class="ot">&lt;-</span> <span class="fu">search_api</span>(id) <span class="co"># Search for the name</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># print(id) Testing, seeing which is the last item that causes an error</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># update data frame</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(api_result)) {</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(api_result) <span class="sc">!=</span> <span class="dv">0</span>) <span class="co"># Check empty/na api_result</span></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>      combined_data <span class="ot">&lt;-</span> <span class="fu">combine_data</span>(combined_data, api_result)</span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># only unresolved AND unattempted ids </span></span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>  remaining_ids <span class="ot">&lt;-</span> combined_data <span class="sc">%&gt;%</span> </span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">is.na</span>(rating)) <span class="sc">%&gt;%</span></span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">distinct</span>(Name) <span class="sc">%&gt;%</span> </span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span>Name <span class="sc">%in%</span> attempted_ids) <span class="co">#Names that are not attempted</span></span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>We can check which ratings are still null</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>combined_null <span class="ot">&lt;-</span> combined_data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">is.na</span>(rating)) <span class="co"># Check rows with no rating</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(combined_null)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 6679</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(combined_null)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 16
+   Rank Name           Platform Year  Genre Publisher NA_Sales EU_Sales JP_Sales
+  &lt;dbl&gt; &lt;chr&gt;          &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;        &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+1     5 Pokemon Red/P… GB       1996  Role… Nintendo     11.3      8.89    10.2 
+2     6 Tetris         GB       1989  Puzz… Nintendo     23.2      2.26     4.22
+3    10 Duck Hunt      NES      1984  Shoo… Nintendo     26.9      0.63     0.28
+4    11 Nintendogs     DS       2005  Simu… Nintendo      9.07    11        1.93
+5    13 Pokemon Gold/… GB       1999  Role… Nintendo      9        6.18     7.2 
+6    20 Brain Age: Tr… DS       2005  Misc  Nintendo      4.75     9.26     4.16
+# ℹ 7 more variables: Other_Sales &lt;dbl&gt;, Global_Sales &lt;dbl&gt;, rating &lt;dbl&gt;,
+#   rating_top &lt;int&gt;, metacritic &lt;int&gt;, score &lt;chr&gt;, ratings_count &lt;int&gt;</code></pre>
+</div>
+</div>
+<p>We can also check the ratings that got values</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>combined_filled <span class="ot">&lt;-</span> combined_data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(rating))</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(combined_filled)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 9919</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(combined_filled)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 16
+   Rank Name           Platform Year  Genre Publisher NA_Sales EU_Sales JP_Sales
+  &lt;dbl&gt; &lt;chr&gt;          &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;        &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+1     1 Wii Sports     Wii      2006  Spor… Nintendo      41.5    29.0      3.77
+2     2 Super Mario B… NES      1985  Plat… Nintendo      29.1     3.58     6.81
+3     3 Mario Kart Wii Wii      2008  Raci… Nintendo      15.8    12.9      3.79
+4     4 Wii Sports Re… Wii      2009  Spor… Nintendo      15.8    11.0      3.28
+5     7 New Super Mar… DS       2006  Plat… Nintendo      11.4     9.23     6.5 
+6     8 Wii Play       Wii      2006  Misc  Nintendo      14.0     9.2      2.93
+# ℹ 7 more variables: Other_Sales &lt;dbl&gt;, Global_Sales &lt;dbl&gt;, rating &lt;dbl&gt;,
+#   rating_top &lt;int&gt;, metacritic &lt;int&gt;, score &lt;chr&gt;, ratings_count &lt;int&gt;</code></pre>
+</div>
+</div>
+<p>Now that I have the data,, and I still want the data to be accessible and reproducible I will save the data to a csv.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(combined_data, <span class="st">"combined_data.csv"</span>, <span class="at">row.names =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="cleaning-data" class="level1">
+<h1>Cleaning Data</h1>
+<p>We can see that much of our data is filled in. There are a lot of rows that are still NA. This could be for several reasons like mismatching names or just the lack of a review for that specific game. I tried a little fixing initially but it seemed inconsequential to fix specific game names and such. To fix this problem I will just drop these values.<br>
+I will focus on the rating column. According to the api this is the column that can not be NA in the response and is the main rating.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>cleaned_df <span class="ot">&lt;-</span> combined_data <span class="sc">%&gt;%</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(rating))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Now I will pivot longer based on the sales rows</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>cleaned_df <span class="ot">&lt;-</span> cleaned_df <span class="sc">%&gt;%</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">ends_with</span>(<span class="st">"_Sales"</span>), <span class="co"># The columns that end in _Sales</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Region"</span>,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_pattern =</span> <span class="st">"(.*)_Sales"</span>, <span class="co"># Get the grouping for the Region.</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"Sales"</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cleaned_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 13
+   Rank Name   Platform Year  Genre Publisher rating rating_top metacritic score
+  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;      &lt;dbl&gt;      &lt;int&gt;      &lt;int&gt; &lt;chr&gt;
+1     1 Wii S… Wii      2006  Spor… Nintendo    4.21          4         76 72.3…
+2     1 Wii S… Wii      2006  Spor… Nintendo    4.21          4         76 72.3…
+3     1 Wii S… Wii      2006  Spor… Nintendo    4.21          4         76 72.3…
+4     1 Wii S… Wii      2006  Spor… Nintendo    4.21          4         76 72.3…
+5     1 Wii S… Wii      2006  Spor… Nintendo    4.21          4         76 72.3…
+6     2 Super… NES      1985  Plat… Nintendo    4.32          4         NA 96.5…
+# ℹ 3 more variables: ratings_count &lt;int&gt;, Region &lt;chr&gt;, Sales &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>We can also select the columns that we want to work with. I will take just the rating and metacritic for the rating values. Metacritic is sometimes NA</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>cleaned_df <span class="ot">&lt;-</span> cleaned_df <span class="sc">%&gt;%</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Rank, Name, Platform, Year, Genre, Publisher, Region, Sales, <span class="at">Rating =</span> rating, <span class="at">Metacritic =</span> metacritic )</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cleaned_df) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 10
+   Rank Name       Platform Year  Genre Publisher Region Sales Rating Metacritic
+  &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;      &lt;int&gt;
+1     1 Wii Sports Wii      2006  Spor… Nintendo  NA     41.5    4.21         76
+2     1 Wii Sports Wii      2006  Spor… Nintendo  EU     29.0    4.21         76
+3     1 Wii Sports Wii      2006  Spor… Nintendo  JP      3.77   4.21         76
+4     1 Wii Sports Wii      2006  Spor… Nintendo  Other   8.46   4.21         76
+5     1 Wii Sports Wii      2006  Spor… Nintendo  Global 82.7    4.21         76
+6     2 Super Mar… NES      1985  Plat… Nintendo  NA     29.1    4.32         NA</code></pre>
+</div>
+</div>
+</section>
+<section id="analyzing-data" class="level1">
+<h1>Analyzing Data</h1>
+<p>Now that the data is in a tidy format with information we want we can now start to analyze it.<br>
+Our initial question was trying to find a correlation between Sales amount and ratings.<br>
+I will filter for the global region and graph sales vs rating.<br>
+I also tried adjusting the alpha value due to the high overlap of points.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>global_df <span class="ot">&lt;-</span> cleaned_df <span class="sc">%&gt;%</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Region <span class="sc">==</span> <span class="st">"Global"</span>)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(global_df, <span class="fu">aes</span>(<span class="at">x =</span> Sales, <span class="at">y =</span> Rating)) <span class="sc">+</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Global Sales of Video Games vs Rawg.io Ratings"</span>,</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Global Sales(Million of Units)"</span>,</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Rawgio Rating"</span></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="607_FinalProject_DylanGold_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We also notice that there are a lot of games that got a review of 0. I am not sure whether or not these values are intentional or not. It may depend on the game.<br>
+We can see that all games that have more than 10 million sales do not have a rating lower than 3. Games that are rating less than 3 are all games that have less than 10 million global sales. I will remove the 0 rated games.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>cleaned_zero_removed <span class="ot">&lt;-</span> cleaned_df <span class="sc">%&gt;%</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Rating <span class="sc">&gt;</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Now the global graph again</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>global_df <span class="ot">&lt;-</span> cleaned_zero_removed <span class="sc">%&gt;%</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Region <span class="sc">==</span> <span class="st">"Global"</span>)</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(global_df, <span class="fu">aes</span>(<span class="at">x =</span> Sales, <span class="at">y =</span> Rating)) <span class="sc">+</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Global Sales of Video Games vs Rawg.io Ratings"</span>,</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Global Sales(Million of Units)"</span>,</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Rawg.io Rating"</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="607_FinalProject_DylanGold_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We can see in the graph above that most games have less than 10 million sales and games tend to be rated higher</p>
+<p>I am also curious to see specific countries. I will look at North Americas sales vs reviews. I am expecting it to be very similar to the global sales.<br>
+It is very similar.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>NA_df <span class="ot">&lt;-</span> cleaned_zero_removed <span class="sc">%&gt;%</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Region <span class="sc">==</span> <span class="st">"NA"</span>)</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(global_df, <span class="fu">aes</span>(<span class="at">x =</span> Sales, <span class="at">y =</span> Rating)) <span class="sc">+</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"North America Sales of Video Games vs Rawg.io Ratings"</span>,</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"NA Sales(Million of Units)"</span>,</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Rawg.io Rating"</span></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="607_FinalProject_DylanGold_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>While there seems to be a positive correlation between sales and reviews we can use statistical methods in R to actually find the correlation. I will go back to using the global dataset.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(global_df<span class="sc">$</span>Sales, global_df<span class="sc">$</span>Rating)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.164879</code></pre>
+</div>
+</div>
+<p>We get a correlation of .16 when using the default correlation in R (pearson) This is a weak but positive correlation.<br>
+Higher game sales can slightly be associated with a higher Rawg.io rating<br>
+This may not be the best method given we have some outliers.<br>
+</p>
+<p>Below is a graph with a linear model attached because so much of the data is clustered at the start this is not very helpful because of this.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(global_df, <span class="fu">aes</span>(<span class="at">x =</span> Sales, <span class="at">y =</span> Rating)) <span class="sc">+</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>) <span class="sc">+</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Global Sales of Video Games vs Rawg.io Ratings"</span>,</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Global Sales(Million of Units)"</span>,</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Rawg.io Rating"</span></span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="607_FinalProject_DylanGold_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Because we have some outliers we can use Spearman to also create a correlation.<br>
+Spearman looks at the rank of the data rather than the raw values. This makes better for when we have large outliers and such. When doing this we still get a slightly positive correlation. This is something we did not cover but does a good job for this set of data.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(global_df<span class="sc">$</span>Sales, global_df<span class="sc">$</span>Rating, <span class="at">method =</span> <span class="st">"spearman"</span>, <span class="at">use =</span> <span class="st">"complete.obs"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.2027387</code></pre>
+</div>
+</div>
+<p>Spearman correlation does not give us a representation of the linearity of the data but whether or not the data has an increasing/decreasing trend. This correlation would indicate that there is a slight trend that as the Sales of a game increases, that the rating (from rawg.io) also increases. This makes sense as popular games tend to be rated higher. I am little surprised that the correlation was not higher though.</p>
+</section>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<p>In conclusion we were able to extract data from a csv and from a public API to determine a relationship between game sales and game reviews from the api Rawg.io.<br>
+We had issues with our limited query amounts and the time it took but we were able to solve those issues by dynamically filling multiple rows in our dataframe with each api call.<br>
+After collecting the data we turned it into a tidy data set with pivot longer and dropping rows that did not get filled in properly.<br>
+We then graphed the data based on the global region(all regions) and saw trends that would indicate a positive correlation between sales and reviews. We also used a new correlation, Spearman Correlation to see if our data had an increasing trend. Due to the outliers in our data it made sense to use this type of correlation over pearson or kendall. With this we saw a positive correlation and we can conclude that there is a slighly positive trend in that higher video game sales tend to have higher reviews on Rawg.io.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

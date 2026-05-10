@@ -6,9 +6,10 @@ editor: visual
 ---
 
 # Approach
-For this project I will be collecting data on video game sales as well as video game reviews and seeing how factors like review score and genre affect videogame sales.
+For this project I will be collecting data on video game sales as well as video game reviews and seeing how factors like game sales and genre affect video game reviews.\
+I will limit the scope to finding a correlation/relationship between the sales a videogame has and the reviews it gets from Rawg.io
 
-# Collecting data
+# Collecting Data
 To start this project we need to first collect the data. \
 I have chosen two data sources one is a csv from https://www.kaggle.com/datasets/volodymyrpivoshenko/video-game-sales-dataset \
 The other is using an api of a gaming review website rawg.io. This is a link to their api documentation https://api.rawg.io/docs/#tag/developers \
@@ -18,6 +19,7 @@ First I will collect the data from the csv. This will serve as our base data tha
 library(tidyverse)
 library(httr)
 library(jsonlite)
+library(stringi)
 ```
 
 
@@ -184,6 +186,7 @@ This code keeps track of the already tried rows
 attempted_ids <- character() # Keep track of attempted names
 ```
 
+Now perform the api calls, cache = true keeps the results in memory for the knit.
 ```{r, cache = TRUE}
 
 remaining_ids <- combined_data %>% # Get the names that still need to be tried
@@ -198,7 +201,9 @@ while(nrow(remaining_ids) > 0) { # while we have remaining ids
   attempted_ids <- c(attempted_ids, id) # Update attempted_ids with the extra name
   
   api_result <- search_api(id) # Search for the name
-  print(id)
+  
+  # print(id) Testing, seeing which is the last item that causes an error
+  
   # update data frame
   if (!is.null(api_result)) {
     if(length(api_result) != 0) # Check empty/na api_result
@@ -212,16 +217,148 @@ while(nrow(remaining_ids) > 0) { # while we have remaining ids
     filter(!Name %in% attempted_ids) #Names that are not attempted
 }
 ```
-Now that I have the data, because I don't want to have to run the api request again to knit the project, and I still want the data to be accessible and reproducible I will save the data to a csv. 
 
+We can check which ratings are still null
 ```{r}
-write.csv(df, "combined_data.csv", row.names = TRUE)
+combined_null <- combined_data %>% filter(is.na(rating)) # Check rows with no rating
+nrow(combined_null)
+head(combined_null)
+```
+We can also check the ratings that got values
+```{r}
+combined_filled <- combined_data %>% filter(!is.na(rating))
+nrow(combined_filled)
+head(combined_filled)
+```
+Now that I have the data,, and I still want the data to be accessible and reproducible I will save the data to a csv. 
+```{r}
+write.csv(combined_data, "combined_data.csv", row.names = TRUE)
 ```
 
-
-The most difficult part was getting the data, now that we have the data we can create graphs and such to try to find a pattern between the games sold and 
+# Cleaning Data
+We can see that much of our data is filled in.
+There are a lot of rows that are still NA. This could be for several reasons like mismatching names or just the lack of a review for that specific game. 
+I tried a little fixing initially but it seemed inconsequential to fix specific game names and such. To fix this problem I will just drop these values. \
+I will focus on the rating column. According to the api this is the column that can not be NA in the response and is the main rating.
 ```{r}
-combined_by_name <- combined_data %>%
-  group_by(Name) %>%
-  summarize()
+cleaned_df <- combined_data %>%
+  filter(!is.na(rating))
 ```
+
+Now I will pivot longer based on the sales rows
+```{r}
+cleaned_df <- cleaned_df %>%
+  pivot_longer(
+    cols = ends_with("_Sales"), # The columns that end in _Sales
+    names_to = "Region",
+    names_pattern = "(.*)_Sales", # Get the grouping for the Region.
+    values_to = "Sales"
+  )
+head(cleaned_df)
+```
+We can also select the columns that we want to work with. I will take just the rating and metacritic for the rating values.
+Metacritic is sometimes NA
+```{r}
+cleaned_df <- cleaned_df %>%
+  select(Rank, Name, Platform, Year, Genre, Publisher, Region, Sales, Rating = rating, Metacritic = metacritic )
+head(cleaned_df) 
+```
+
+# Analyzing Data
+Now that the data is in a tidy format with information we want we can now start to analyze it.\
+Our initial question was trying to find a correlation between Sales amount and ratings.\
+I will filter for the global region and graph sales vs rating. \
+I also tried adjusting the alpha value due to the high overlap of points.
+```{r}
+global_df <- cleaned_df %>%
+  filter(Region == "Global")
+
+ggplot(global_df, aes(x = Sales, y = Rating)) +
+  geom_point(alpha = 0.1) +
+  labs(
+    title = "Global Sales of Video Games vs Rawg.io Ratings",
+    x = "Global Sales(Million of Units)",
+    y = "Rawgio Rating"
+  )
+```
+We also notice that there are a lot of games that got a review of 0. I am not sure whether or not these values are intentional or not. It may depend on the game.\
+We can see that all games that have more than 10 million sales do not have a rating lower than 3. 
+Games that are rating less than 3 are all games that have less than 10 million global sales.
+I will remove the 0 rated games.
+```{r}
+cleaned_zero_removed <- cleaned_df %>%
+  filter(Rating > 0)
+```
+Now the global graph again
+```{r}
+global_df <- cleaned_zero_removed %>%
+  filter(Region == "Global")
+
+ggplot(global_df, aes(x = Sales, y = Rating)) +
+  geom_point(alpha = 0.1) +
+  labs(
+    title = "Global Sales of Video Games vs Rawg.io Ratings",
+    x = "Global Sales(Million of Units)",
+    y = "Rawg.io Rating"
+  )
+```
+We can see in the graph above that most games have less than 10 million sales and games tend to be rated higher 
+
+
+I am also curious to see specific countries. I will look at North Americas sales vs reviews. I am expecting it to be very similar to the global sales. \
+It is very similar.
+
+```{r}
+NA_df <- cleaned_zero_removed %>%
+  filter(Region == "NA")
+
+ggplot(global_df, aes(x = Sales, y = Rating)) +
+  geom_point(alpha = 0.1) +
+  labs(
+    title = "North America Sales of Video Games vs Rawg.io Ratings",
+    x = "NA Sales(Million of Units)",
+    y = "Rawg.io Rating"
+  )
+```
+While there seems to be a positive correlation between sales and reviews we can use statistical methods in R to actually find the correlation.
+I will go back to using the global dataset.
+```{r}
+cor(global_df$Sales, global_df$Rating)
+```
+We get a correlation of .16 when using the default correlation in R (pearson)
+This is a weak but positive correlation. \
+Higher game sales can slightly be associated with a higher Rawg.io rating \
+This may not be the best method given we have some outliers. \
+
+Below is a graph with a linear model attached because so much of the data is clustered at the start this is not very helpful because of this.
+```{r}
+ggplot(global_df, aes(x = Sales, y = Rating)) +
+  geom_point(alpha = 0.1) +
+  geom_smooth(method = "lm") +
+  labs(
+    title = "Global Sales of Video Games vs Rawg.io Ratings",
+    x = "Global Sales(Million of Units)",
+    y = "Rawg.io Rating"
+  )
+```
+Because we have some outliers we can use Spearman to also create a correlation. \
+Spearman looks at the rank of the data rather than the raw values. This makes better for when we have large outliers and such.
+When doing this we still get a slightly positive correlation. This is something we did not cover but does a good job for this set of data.
+```{r}
+cor(global_df$Sales, global_df$Rating, method = "spearman", use = "complete.obs")
+```
+Spearman correlation does not give us a representation of the linearity of the data but whether or not the data has an increasing/decreasing trend.
+This correlation would indicate that there is a slight trend that as the Sales of a game increases, that the rating (from rawg.io) also increases.
+This makes sense as popular games tend to be rated higher. I am little surprised that the correlation was not higher though.
+
+
+# Conclusion
+In conclusion we were able to extract data from a csv and from a public API to determine a relationship between game sales and game reviews from the api Rawg.io. \
+We had issues with our limited query amounts and the time it took but we were able to solve those issues by dynamically filling multiple rows in our dataframe with each api call. \
+After collecting the data we turned it into a tidy data set with pivot longer and dropping rows that did not get filled in properly. \
+We then graphed the data based on the global region(all regions) and saw trends that would indicate a positive correlation between sales and reviews. We also used a new correlation, Spearman Correlation to see if our data had an increasing trend. Due to the outliers in our data it made sense to use this type of correlation over pearson or kendall. 
+With this we saw a positive correlation and we can conclude that there is a slighly positive trend in that higher video game sales tend to have higher reviews on Rawg.io.
+
+
+
+
