@@ -242,3 +242,127 @@ This handles all cases:
 | Duplicate IDs in dataframe | queried once only        |
 
 This is usually the safest enrichment workflow for APIs + `left_join()` + `coalesce()`.
+
+Me: I have an row with Pokemon Red/Pokemon Blue. The Api call gives Pokemon Red, Blue
+How can I match these
+
+Chatgpt:You need to normalize the names into a comparable format before joining/matching.
+
+Your dataframe has:
+
+```text
+Pokemon Red/Pokemon Blue
+```
+
+API returns:
+
+```text
+Pokemon Red, Blue
+```
+
+These represent the same thing but use different separators.
+
+A good approach is:
+
+1. standardize separators
+2. split into titles
+3. sort them
+4. recombine into a canonical string
+
+Example:
+
+```r id="r8p2bk"
+library(dplyr)
+library(stringr)
+library(purrr)
+
+normalize_title <- function(x) {
+
+  x %>%
+    # unify separators
+    str_replace_all("/", ",") %>%
+    str_replace_all("&", ",") %>%
+
+    # split into pieces
+    str_split(",") %>%
+    map_chr(\(parts) {
+
+      parts %>%
+        str_trim() %>%
+        sort() %>%              # ensures consistent order
+        paste(collapse = ", ")
+    })
+}
+```
+
+Example:
+
+```r id="mnq31t"
+normalize_title("Pokemon Red/Pokemon Blue")
+# "Pokemon Blue, Pokemon Red"
+
+normalize_title("Pokemon Red, Blue")
+# "Blue, Pokemon Red"
+```
+
+That still isn't ideal because the second title omits "Pokemon".
+
+So you may need a smarter expansion rule.
+
+For Pokémon specifically:
+
+```r id="q0r5lb"
+normalize_pokemon <- function(x) {
+
+  x <- str_replace_all(x, "/", ",")
+
+  pieces <- str_split(x, ",")[[1]] %>%
+    str_trim()
+
+  # extract franchise prefix from first item
+  prefix <- str_extract(pieces[1], "^[A-Za-z]+")
+
+  pieces <- map_chr(pieces, \(p) {
+
+    # if piece lacks prefix, add it
+    if(!str_detect(p, prefix)) {
+      paste(prefix, p)
+    } else {
+      p
+    }
+  })
+
+  paste(sort(pieces), collapse = ", ")
+}
+```
+
+Now:
+
+```r id="x6u0ke"
+normalize_pokemon("Pokemon Red/Pokemon Blue")
+# "Pokemon Blue, Pokemon Red"
+
+normalize_pokemon("Pokemon Red, Blue")
+# "Pokemon Blue, Pokemon Red"
+```
+
+Now they match.
+
+Then create normalized join keys:
+
+```r id="u2mj1k"
+df <- df %>%
+  mutate(match_key = normalize_pokemon(Name))
+
+api_results <- api_results %>%
+  mutate(match_key = normalize_pokemon(title))
+```
+
+Then join:
+
+```r id="1m0tnq"
+left_join(df, api_results, by = "match_key")
+```
+
+This “canonical key” strategy is extremely common for messy API matching.
+
